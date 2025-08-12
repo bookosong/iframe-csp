@@ -1,0 +1,20 @@
+{
+  "name": "iframe-csp-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "license": "proprietary",
+  "author": "dhanu.gupta@gmail.com",
+  "private": true,
+  "dependencies": {
+    "cheerio": "^1.1.2",
+    "express": "^4.21.2",
+    "express-http-proxy": "^2.1.1",
+    "http-proxy-middleware": "^3.0.5",
+    "morgan": "^1.10.1",
+    "node-cache": "^5.1.2"
+  }
+}
