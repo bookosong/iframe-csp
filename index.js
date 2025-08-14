@@ -761,7 +761,6 @@ const proxyMiddleware = (req, res, next) => {
                     proxyReqOpts.headers['x-authorization'] = AUTH_TOKEN;
                     proxyReqOpts.headers['cookie'] = `token=${AUTH_TOKEN.replace('Bearer ', '')}; sid=${AUTH_SID}; uid=9527; aliyungf_tc=${crypto.randomBytes(32).toString('hex')}; _metasocn_session=${crypto.randomBytes(16).toString('hex')}`;
                 }
-                };
                 
                 // 移除可能导致304响应或其他缓存问题的头
                 delete proxyReqOpts.headers['if-none-match'];
