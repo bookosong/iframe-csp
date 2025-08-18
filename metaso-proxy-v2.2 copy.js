@@ -1434,10 +1434,7 @@ app.use('/', proxy('https://metaso.cn', {
             
             proxyReqOpts.href='https://metaso.cn/' + srcReq.path;
             // 日志
-            console.log('已为/search/请求query ' + srcReq.path + srcReq.url+ ' 添加query信息');
-            //console.log(srcReq.url);
-            //var urlObj = url.parse(srcReq.url ,true);
-            //srcReq.url=''
+            console.log('已为/search/请求query ' + srcReq.path + srcReq.url);
 
 
 
@@ -1458,7 +1455,7 @@ app.use('/', proxy('https://metaso.cn', {
         }
 
         console.log('\n=== 代理请求 ' + srcReq.path + ' ===');
-
+        
         return proxyReqOpts;
     }
 }));

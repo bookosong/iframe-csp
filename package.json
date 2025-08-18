@@ -10,11 +10,13 @@
   "author": "dhanu.gupta@gmail.com",
   "private": true,
   "dependencies": {
+    "axios": "^1.11.0",
     "cheerio": "^1.1.2",
     "express": "^4.21.2",
     "express-http-proxy": "^2.1.1",
     "http-proxy-middleware": "^3.0.5",
     "morgan": "^1.10.1",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "node-fetch": "^3.3.2"
   }
 }

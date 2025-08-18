@@ -418,6 +418,13 @@ function processHtmlResponse(html, requestPath) {
                                 function (config) {
                                     if (config.url && config.url.includes('metaso.cn')) {
                                         config.url = config.url.replace('https://metaso.cn', 'http://localhost:10101');
+
+                                        if(config.url.includes('/search'){
+                                           let data = JSON.stringify({"q": "谁是这个世界上最美丽的女人", "scope": "webpage", "includeSummary": false, "size": "10", "includeRawContent": false, "conciseSnippet": false});
+                                           config.url= 'https://metaso.cn/api/v1/search'；
+                                           config.data=data; 
+                                           authLog('拦截Axios请求:', config.url+config.data);
+                                           }
                                         config.headers = {
                                             ...config.headers,
                                             'Authorization': 'Bearer mk-4A9944E6F3917711EFCF7B772BC3A5AE',
@@ -764,45 +771,10 @@ function processHtmlResponse(html, requestPath) {
         // 辅助函数：从URL中提取文件名
         function extractFilename(url) {
             if (!url) return null;
-            
-            // 匹配 static-1.metaso.cn 的资源
-            if (url.includes('static-1.metaso.cn/_next/static/')) {
-                // CSS文件格式: 44be927df5c0115a.css (16位哈希)
-                let match = url.match(/\/([a-f0-9]{16}\.css)$/);
-                if (match) return match[1];
-                
-                // JS文件格式: 23362-2bb0da0da92b2600.js (数字-16位哈希)
-                match = url.match(/\/(\d+-[a-f0-9]{16}\.js)$/);
-                if (match) return match[1];
-                
-                // 其他JS文件格式: main-app-20a8b302c38c77ce.js
-                match = url.match(/([a-z\-]+-[a-f0-9]{16}\.js)$/);
-                if (match) return match[1];
-                
-                // Media files: app-qrcode.f8820aee.png
-                match = url.match(/\/media\/(.+)$/);
-                if (match) return match[1];
-            }
-            
-            // 匹配 static-1.metaso.cn 的usermaven等其他资源
-            if (url.includes('static-1.metaso.cn/usermaven/')) {
-                return url.split('static-1.metaso.cn/')[1]; // 返回 usermaven/lib.js
-            }
-            
-            // 也匹配其他 static-1.metaso.cn 资源
-            if (url.includes('static-1.metaso.cn/static/')) {
-                const match = url.match(/\/static\/(.+)$/);
-                if (match) {
-                    // 对于 static/ 目录下的文件，保持原始路径结构
-                    return match[1];
-                }
-            }
-            
             // 匹配已存在的 metaso.cn_files/ 路径
             if (url.includes('metaso.cn_files/')) {
                 return url.split('metaso.cn_files/')[1];
             }
-            
             return null;
         }
         
@@ -1389,11 +1361,11 @@ app.use('/', proxy('https://metaso.cn', {
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
         const contentType = proxyRes.headers['content-type'] || '';
         
-        console.log('\\n=== 处理响应数据 ' + userReq.path + ' ===');
+        console.log('\\n=== 处理响应数据 ALL first ' + userReq.path + ' ==='+userReq.url);
         console.log('Content-Type:', contentType);
         console.log('数据大小:', proxyResData.length);
         
-        if (contentType.includes('text/html')) {
+        if (contentType.includes('text/html') || (contentType.includes('application/json') && userReq.path.includes('/search/'))||contentType.includes('application/xhtml+xml')) {
             console.log('处理HTML响应...');
             const html = proxyResData.toString('utf8');
             const processedHtml = processHtmlResponse(html, userReq.path);
@@ -1401,7 +1373,7 @@ app.use('/', proxy('https://metaso.cn', {
             return processedHtml;
         }
         
-        console.log('非HTML响应，直接返回');
+        console.log('非HTML响应和application/json，直接返回');
         return proxyResData;
     },
     
@@ -1434,10 +1406,7 @@ app.use('/', proxy('https://metaso.cn', {
             
             proxyReqOpts.href='https://metaso.cn/' + srcReq.path;
             // 日志
-            console.log('已为/search/请求query ' + srcReq.path + srcReq.url+ ' 添加query信息');
-            //console.log(srcReq.url);
-            //var urlObj = url.parse(srcReq.url ,true);
-            //srcReq.url=''
+            console.log('已为/search/请求query ' + srcReq.path + srcReq.url);
 
 
 
@@ -1458,7 +1427,7 @@ app.use('/', proxy('https://metaso.cn', {
         }
 
         console.log('\n=== 代理请求 ' + srcReq.path + ' ===');
-
+        
         return proxyReqOpts;
     }
 }));

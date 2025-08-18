@@ -1413,52 +1413,28 @@ app.use('/', proxy('https://metaso.cn', {
         proxyReqOpts.headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8';
         proxyReqOpts.headers['Accept-Language'] = 'zh-CN,zh;q=0.9,en;q=0.8';
         
-        // 对 /search/ 请求，始终带上认证信息和本地静态资源拦截
-        if (srcReq.path.includes('/search/')) {
-            // 认证信息
+        // 为API请求添加认证信息
+        if (srcReq.path.includes('/api/') || srcReq.path.includes('/login/') || srcReq.path.includes('/search/')) {
             proxyReqOpts.headers['Authorization'] = 'Bearer mk-4A9944E6F3917711EFCF7B772BC3A5AE';
             proxyReqOpts.headers['X-User-ID'] = '68775c6659a307e8ac864bf6';
             proxyReqOpts.headers['X-Session-ID'] = 'e5874318e9ee41788605c88fbe43ab19';
             proxyReqOpts.headers['X-Requested-With'] = 'XMLHttpRequest';
-            // Cookie 认证
-            const authCookies = [
-                'uid=68775c6659a307e8ac864bf6',
-                'sid=e5874318e9ee41788605c88fbe43ab19',
-                'isLoggedIn=true',
-                'token=mk-4A9944E6F3917711EFCF7B772BC3A5AE'
-            ];
-            proxyReqOpts.headers['Cookie'] = authCookies.join('; ');
-            // 保证 referer/origin 指向本站，防止源站校验失败
-            proxyReqOpts.headers['Referer'] = 'https://metaso.cn/';
-            proxyReqOpts.headers['Origin'] = 'https://metaso.cn';
             
-            proxyReqOpts.href='https://metaso.cn/' + srcReq.path;
-            // 日志
-            console.log('已为/search/请求query ' + srcReq.path + srcReq.url+ ' 添加query信息');
-            //console.log(srcReq.url);
-            //var urlObj = url.parse(srcReq.url ,true);
-            //srcReq.url=''
-
-
-
-        } else if (srcReq.path.includes('/api/') || srcReq.path.includes('/login/')) {
-            // 其他API同原逻辑
-            proxyReqOpts.headers['Authorization'] = 'Bearer mk-4A9944E6F3917711EFCF7B772BC3A5AE';
-            proxyReqOpts.headers['X-User-ID'] = '68775c6659a307e8ac864bf6';
-            proxyReqOpts.headers['X-Session-ID'] = 'e5874318e9ee41788605c88fbe43ab19';
-            proxyReqOpts.headers['X-Requested-With'] = 'XMLHttpRequest';
+            // 设置Cookie认证
             const authCookies = [
                 'uid=68775c6659a307e8ac864bf6',
-                'sid=e5874318e9ee41788605c88fbe43ab19',
+                'sid=e5874318e9ee41788605c88fbe43ab19', 
                 'isLoggedIn=true',
                 'token=mk-4A9944E6F3917711EFCF7B772BC3A5AE'
             ];
             proxyReqOpts.headers['Cookie'] = authCookies.join('; ');
+            
             console.log('已为API请求 ' + srcReq.path + ' 添加认证信息 (Bearer mk-4A9944E6F3917711EFCF7B772BC3A5AE)');
         }
-
-        console.log('\n=== 代理请求 ' + srcReq.path + ' ===');
-
+        
+        console.log('\\n=== 代理请求 ' + srcReq.path + ' ===');
+        console.log('目标URL:', proxyReqOpts.href);
+        
         return proxyReqOpts;
     }
 }));

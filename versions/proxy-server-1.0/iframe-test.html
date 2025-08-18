@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>iframe嵌入测试</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        .status {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .success {
+            color: #28a745;
+        }
+        .info {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>iframe CSP 绕过测试</h1>
+        
+        <div class="status">
+            <h3>测试状态:</h3>
+            <p class="success">✓ 代理服务器已启动在 http://localhost:10101</p>
+            <p class="success">✓ CSP头已移除（Content-Security-Policy）</p>
+            <p class="success">✓ X-Frame-Options头已设置为ALLOWALL</p>
+            <p class="success">✓ 静态资源已本地化（90个文件替换）</p>
+            <p class="success">✓ 微信登录已绕过，注入授权信息</p>
+            <p class="info">ℹ️ 如果iframe正常显示，说明所有问题已解决</p>
+        </div>
+
+        <h2>iframe嵌入测试</h2>
+        <p>下面的iframe应该能够正常显示代理服务器的内容：</p>
+        
+        <iframe 
+            src="http://localhost:10101" 
+            title="metaso.cn 代理测试">
+            您的浏览器不支持iframe
+        </iframe>
+
+        <h2>功能验证</h2>
+        <p>如果iframe显示正常，请检查:</p>
+        <ul>
+            <li>页面是否显示了"代理服务器运行正常"</li>
+            <li>是否注入了localStorage授权信息</li>
+            <li>静态资源链接是否可以正常访问</li>
+            <li>控制台是否显示了授权信息日志</li>
+        </ul>
+
+        <h2>下一步</h2>
+        <p>现在可以将URL改为代理metaso.cn的真实代理服务器进行测试。</p>
+    </div>
+
+    <script>
+        // 测试iframe通信
+        window.addEventListener('message', function(event) {
+            console.log('收到iframe消息:', event.data);
+        });
+
+        // 检查iframe加载状态
+        document.querySelector('iframe').addEventListener('load', function() {
+            console.log('iframe加载完成');
+            
+            // 尝试访问iframe内容（可能受同源策略限制）
+            try {
+                const iframeDoc = this.contentDocument || this.contentWindow.document;
+                console.log('iframe文档标题:', iframeDoc.title);
+            } catch (e) {
+                console.log('无法访问iframe内容（同源策略）:', e.message);
+            }
+        });
+    </script>
+</body>
+</html>

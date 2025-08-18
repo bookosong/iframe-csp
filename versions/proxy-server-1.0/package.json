@@ -1,0 +1,47 @@
+{
+  "name": "metaso-proxy-server",
+  "version": "1.0.0",
+  "description": "metaso.cn 代理服务器 - 解决CSP问题，支持iframe嵌入",
+  "main": "metaso-proxy.js",
+  "scripts": {
+    "start": "node metaso-proxy.js",
+    "dev": "node metaso-proxy.js",
+    "setup": "node scripts/download-resources.js",
+    "test": "curl http://localhost:10101 -I",
+    "stop": "pkill -f 'node metaso-proxy.js'",
+    "restart": "npm run stop && sleep 2 && npm start",
+    "logs": "tail -f metaso-proxy.log",
+    "status": "ps aux | grep metaso-proxy | grep -v grep"
+  },
+  "keywords": [
+    "proxy",
+    "metaso",
+    "csp",
+    "iframe",
+    "express",
+    "cheerio",
+    "bypass"
+  ],
+  "author": "GitHub Copilot",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "express": "^4.21.2",
+    "express-http-proxy": "^2.1.1",
+    "http-proxy-middleware": "^3.0.5",
+    "morgan": "^1.10.1",
+    "node-cache": "^5.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/metaso-proxy-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/metaso-proxy-server/issues"
+  },
+  "homepage": "https://github.com/your-org/metaso-proxy-server#readme"
+}
