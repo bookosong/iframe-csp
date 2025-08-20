@@ -1,184 +1,138 @@
+// 简单自定义 logger
+const logger = {
+    info: (...args) => console.log('[INFO]', ...args),
+    debug: (...args) => console.debug('[DEBUG]', ...args),
+    error: (...args) => console.error('[ERROR]', ...args),
+};
 const express = require('express');
 const proxy = require('express-http-proxy');
 const cheerio = require('cheerio');
 const path = require('path');
 const fs = require('fs');
 
+const { v4: uuidv4 } = require('uuid');
+const axios = require('axios');
 const app = express();
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const PORT = 10101; // 改回原来的端口
 
-// 环境配置
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const IS_PRODUCTION = NODE_ENV === 'production';
-
-// 日志配置
-const LOG_LEVELS = {
-    ERROR: 0,
-    WARN: 1,
-    INFO: 2,
-    DEBUG: 3
-};
-
-const CURRENT_LOG_LEVEL = IS_PRODUCTION ? LOG_LEVELS.INFO : LOG_LEVELS.DEBUG;
-
-// 日志函数
-function log(level, ...args) {
-    const levelNames = ['ERROR', 'WARN', 'INFO', 'DEBUG'];
-    if (level <= CURRENT_LOG_LEVEL) {
-        const timestamp = new Date().toISOString();
-        const levelName = levelNames[level];
-        const prefix = IS_PRODUCTION ? 
-            `[${timestamp}] [${levelName}] [PROD]` : 
-            `[${timestamp}] [${levelName}] [DEV]`;
-        console.log(prefix, ...args);
-    }
-}
-
-// 便捷日志方法
-const logger = {
-    error: (...args) => log(LOG_LEVELS.ERROR, ...args),
-    warn: (...args) => log(LOG_LEVELS.WARN, ...args),
-    info: (...args) => log(LOG_LEVELS.INFO, ...args),
-    debug: (...args) => log(LOG_LEVELS.DEBUG, ...args)
-};
-
-// JavaScript文件预处理中间件 - 移除源码映射引用
-app.use('/static', (req, res, next) => {
-    // 只处理JavaScript文件
-    if (req.path.endsWith('.js')) {
-        const filePath = path.join(__dirname, 'static', req.path);
-        
-        // 检查文件是否存在
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) {
-                // 文件不存在，继续到下一个中间件
-                return next();
-            }
-            
-            // 移除源码映射引用
-            const cleanedData = data.replace(/\/\/# sourceMappingURL=.*\.map/g, '');
-            
-            // 设置正确的内容类型
-            res.setHeader('content-type', 'application/javascript; charset=UTF-8');
-            res.send(cleanedData);
+// 智能解析 /search/:id 路由，短ID自动POST获取新ID并重定向，长ID直接代理
+app.get('/search/:id', async (req, res, next) => {
+    let searchId = req.params.id;
+    let queryStr = req.url.split('?')[1] || '';
+    let queryObj = {};
+    // 支持分号和&混合参数
+    if (queryStr) {
+        queryStr.split(/[;&]/).forEach(pair => {
+            const [k, v] = pair.split('=');
+            if (k && v) queryObj[k.trim()] = decodeURIComponent(v.trim());
         });
-    } else {
-        // 非JS文件，继续处理
-        next();
     }
-});
-
-// 设置静态资源中间件，将 /static 路径映射到本地的 static 目录
-app.use('/static', express.static(path.join(__dirname, 'static')));
-
-// 404 fallback for missing static files - try to fetch from original server
-app.use('/static', (req, res, next) => {
-    const filePath = req.path;
-    console.log(`Missing static file: ${filePath}`);
+    // 兼容 ?q=xxx;scope=yyy 这种格式
     
-    // Handle source map requests - return 404 to suppress source map errors
-    if (filePath.endsWith('.map') || filePath.includes('.map')) {
-        console.log(`Source map request ignored: ${filePath}`);
-        return res.status(404).send('Source map not available');
+    if (queryObj.q && typeof queryObj.q === 'string' && queryObj.q.includes(';')) {
+        queryObj.q.split(';').forEach(pair => {
+            const [k, v] = pair.split('=');
+            if (k && v) queryObj[k.trim()] = v.trim();
+        });
     }
-    
-    // Try to map to original URL
-    let originalUrl = '';
-    if (filePath.startsWith('/metaso.cn_files/')) {
-        const filename = filePath.replace('/metaso.cn_files/', '');
-        
-        // Handle different file patterns
-        if (filename.startsWith('usermaven/')) {
-            originalUrl = `https://static-1.metaso.cn/${filename}`;
-        } else if (filename.includes('.png') || filename.includes('.jpg') || filename.includes('.jpeg')) {
-            // Media files
-            originalUrl = `https://static-1.metaso.cn/_next/static/media/${filename}`;
-        } else if (filename.includes('-') && filename.endsWith('.js')) {
-            // Chunk files with hashes
-            originalUrl = `https://static-1.metaso.cn/_next/static/chunks/pages/${filename}`;
-        } else if (filename.endsWith('.js')) {
-            // Other JS files
-            originalUrl = `https://static-1.metaso.cn/_next/static/chunks/${filename}`;
-        } else if (filename.endsWith('.css')) {
-            // CSS files
-            originalUrl = `https://static-1.metaso.cn/_next/static/css/${filename}`;
-        } else {
-            // Generic fallback
-            originalUrl = `https://static-1.metaso.cn/_next/static/${filename}`;
+    // 长ID直接代理
+    if (searchId && searchId.length >= '8646326301509578752'.length) {
+        return next();
+    }
+    // 短ID，模拟前端行为，POST获取新ID
+    if (!queryObj.q || typeof queryObj.q !== 'string' || !queryObj.q.length) {
+        return res.status(400).send('缺少q参数');
+    }
+    let postData = {
+        id: uuidv4(),
+        q: queryObj.q,
+        scope: queryObj.scope || 'webpage',
+        includeSummary: queryObj.includeSummary === 'true',
+        size: queryObj.size || '10',
+        includeRawContent: queryObj.includeRawContent === 'true',
+        conciseSnippet: queryObj.conciseSnippet === 'true'
+    };
+    for (const k in queryObj) {
+        if (!(k in postData)) postData[k] = queryObj[k];
+    }
+    try {
+        const apiRes = await axios.post('https://metaso.cn/api/v1/search', postData, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer mk-4A9944E6F3917711EFCF7B772BC3A5AE',
+                'Content-Type': 'application/json',
+            }
+        });
+        console.log('metaso.cn/search/ API 返回:', JSON.stringify(apiRes.data));
+        let realId = apiRes.data && (apiRes.data.id || (apiRes.data.data && apiRes.data.data.id));
+        if (!realId) {
+            return res.status(502).send('API未返回有效ID: ' + JSON.stringify(apiRes.data));
         }
-    }
-    
-    if (originalUrl) {
-        console.log(`Proxying missing file from: ${originalUrl}`);
-        // Proxy the request to the original server
-        const https = require('https');
-        https.get(originalUrl, (proxyRes) => {
-            // Set appropriate content type
-            let contentType = proxyRes.headers['content-type'] || 'application/javascript';
-            
-            // Modify JavaScript files to remove source map references
-            if (contentType.includes('javascript') || originalUrl.endsWith('.js')) {
-                let data = '';
-                proxyRes.on('data', chunk => {
-                    data += chunk;
-                });
-                proxyRes.on('end', () => {
-                    // Remove source map references to prevent 404 errors
-                    const cleanedData = data.replace(/\/\/# sourceMappingURL=.*\.map/g, '');
-                    res.setHeader('content-type', contentType);
-                    res.send(cleanedData);
-                });
-            } else {
-                // For non-JS files, pipe directly
-                res.setHeader('content-type', contentType);
-                proxyRes.pipe(res);
-            }
-        }).on('error', (err) => {
-            logger.debug('已移除CSP meta标签');
-            res.status(404).send('File not found');
+        // 保留原参数，重定向到新ID
+        const url = require('url');
+        let redirectUrl = url.format({
+            pathname: `/search/${realId}`,
+            query: queryObj
         });
-    } else {
-        res.status(404).send('File not found');
+        return res.redirect(302, redirectUrl);
+    } catch (err) {
+        return res.status(502).send('API查询失败');
     }
-});
+ });
+
+// ...existing code...
 
 // HTML处理函数
 function processHtmlResponse(html, requestPath) {
- 
     try {
-        const $ = cheerio.load(html);
-        
-        logger.info(`处理HTML请求: ${requestPath}`);
-        
-    // 移除CSP的meta标签
-    $('meta[http-equiv="Content-Security-Policy"]').remove();
-    $('meta[http-equiv="content-security-policy"]').remove();
-    $('meta[name="content-security-policy"]').remove();
-    logger.debug('已移除CSP meta标签');
+        // ...existing code...
 
-    // 彻底移除左侧菜单栏（LeftMenu相关class/id）
-    $('[class*="LeftMenu"], [id*="LeftMenu"], .LeftMenu, #LeftMenu').remove();
-    logger.info('已彻底移除LeftMenu相关侧边栏DOM');
-
-        // 隐藏广告链接（微信广告地址）
-        // 1. 隐藏所有a标签（精确和模糊匹配）
-        $('a[href="https://mp.weixin.qq.com/s/AKYOZfBM_Ph0OiIj_8lCeg"], a[href*="mp.weixin.qq.com/s/AKYOZfBM_Ph0OiIj_8lCeg"]').each(function() {
-            $(this).css('display', 'none');
-        });
-        // 2. 隐藏所有含该链接的data-href
-        $('[data-href*="mp.weixin.qq.com/s/AKYOZfBM_Ph0OiIj_8lCeg"]').each(function() {
-            $(this).css('display', 'none');
-        });
-        // 3. 隐藏所有包含该链接文本的元素
-        $('*').filter(function(){
-            return $(this).text().includes('https://mp.weixin.qq.com/s/AKYOZfBM_Ph0OiIj_8lCeg');
-        }).each(function() {
-            $(this).css('display', 'none');
-        });
-        // 4. 隐藏所有包含该链接的父容器（如广告块div）
-        $('a[href*="mp.weixin.qq.com/s/AKYOZfBM_Ph0OiIj_8lCeg"]').each(function(){
-            $(this).parent().css('display', 'none');
-        });
+// /static 路由：本地优先，找不到自动回源远程静态资源
+const sendLocalOrProxy = async (req, res) => {
+    // 修正本地路径拼接，去掉 req.path 开头的 /
+    const relPath = req.path.replace(/^\//, '');
+    const localPath = path.join(__dirname, 'static', relPath);
+    console.log('[STATIC] 请求:', req.path);
+    console.log('[STATIC] 本地查找:', localPath);
+    if (fs.existsSync(localPath)) {
+        console.log('[STATIC] 命中本地，直接返回');
+        return res.sendFile(localPath);
+    }
+    // 自动回源并保存到本地
+    const remoteUrl = 'https://static-1.metaso.cn' + req.path;
+    console.log('[STATIC] 本地未命中，回源并尝试下载:', remoteUrl);
+    try {
+        const response = await axios.get(remoteUrl, { responseType: 'arraybuffer', validateStatus: null });
+        console.log('[STATIC] 回源状态:', response.status, '类型:', response.headers['content-type']);
+        // 只在响应为200且内容有效时才写入本地
+        if (
+            response.status >= 200 && response.status < 300 &&
+            response.headers['content-type'] && !response.headers['content-type'].includes('text/html') &&
+            response.data && response.data.length > 0
+        ) {
+            fs.mkdirSync(path.dirname(localPath), { recursive: true });
+            fs.writeFileSync(localPath, response.data);
+            res.set('Content-Type', response.headers['content-type'] || 'application/octet-stream');
+            console.log('[STATIC] 回源成功，已保存到本地并返回');
+            return res.sendFile(localPath);
+        } else {
+            console.log('[STATIC] 回源失败，远程返回非静态资源、404或内容为空');
+            return res.status(404).send('Not found');
+        }
+    } catch (e) {
+        console.log('[STATIC] 回源异常:', e.message, e.response?.status);
+        return res.status(404).send('Not found');
+    }
+};
+app.use('/static', (req, res) => {
+    // 忽略 source map
+    if (req.path.endsWith('.map') || req.path.includes('.map')) {
+        return res.status(404).send('Source map not available');
+    }
+    return sendLocalOrProxy(req, res);
+});
         // 5. 针对 SystemMessage_message-content__jqSud 广告div直接删除（只要包含目标链接或广告文案）
         $('div.SystemMessage_message-content__jqSud').each(function() {
             var $div = $(this);
@@ -400,79 +354,64 @@ a[href*="mp.weixin.qq.com/s/AKYOZfBM_Ph0OiIj_8lCeg"],
         const processedResources = new Set(); // 防止重复处理
         const preloadResources = []; // 收集需要预加载的资源
         
-        // 辅助函数：从URL中提取文件名
-        function extractFilename(url) {
-            if (!url) return null;
-            // 匹配已存在的 metaso.cn_files/ 路径
-            if (url.includes('metaso.cn_files/')) {
-                return url.split('metaso.cn_files/')[1];
-            }
-            return null;
+        // 辅助函数：判断是否为 metaso.cn_files 资源
+        function isMetasoFile(url) {
+            return url && url.includes('metaso.cn_files/');
         }
-        
-        // 辅助函数：处理资源并收集预加载信息
-        function processResource(originalUrl, filename, resourceType, priority = 'medium') {
-            if (!filename || processedResources.has(filename)) {
-                return null; // 防止重复处理
+
+        // 只替换 metaso.cn_files/ 资源为本地路径，其他如 /static/_next/static/ 路径保持不变
+        function toLocalMetasoPath(url) {
+            if (!url) return url;
+            if (isMetasoFile(url)) {
+                // 只保留 metaso.cn_files/ 后的部分
+                const idx = url.indexOf('metaso.cn_files/');
+                return '/static/' + url.slice(idx);
             }
-            
-            const localPath = '/static/metaso.cn_files/' + filename;
-            processedResources.add(filename);
-            replacedCount++;
-            
-            // 收集需要预加载的资源
-            preloadResources.push({
-                href: localPath,
-                as: resourceType,
-                priority: priority
-            });
-            
-            logger.debug(`处理${resourceType}: ${originalUrl} -> ${localPath}`);
-            return localPath;
+            return url;
         }
-        
+
         // 处理CSS文件 - 高优先级预加载
         $('link[rel="stylesheet"]').each((index, element) => {
             const href = $(element).attr('href');
-            const filename = extractFilename(href);
-            const localPath = processResource(href, filename, 'style', 'high');
-            if (localPath) {
+            const localPath = toLocalMetasoPath(href);
+            if (localPath !== href) {
                 $(element).attr('href', localPath);
+                preloadResources.push({ href: localPath, as: 'style', priority: 'high' });
+                replacedCount++;
             }
         });
-        
+
         // 处理JS文件 - 中等优先级预加载
         $('script[src]').each((index, element) => {
             const src = $(element).attr('src');
-            const filename = extractFilename(src);
-            const localPath = processResource(src, filename, 'script', 'medium');
-            if (localPath) {
+            const localPath = toLocalMetasoPath(src);
+            if (localPath !== src) {
                 $(element).attr('src', localPath);
+                preloadResources.push({ href: localPath, as: 'script', priority: 'medium' });
+                replacedCount++;
             }
         });
-        
+
         // 处理图片 - 低优先级预加载
         $('img[src]').each((index, element) => {
             const src = $(element).attr('src');
-            const filename = extractFilename(src);
-            const localPath = processResource(src, filename, 'image', 'low');
-            if (localPath) {
+            const localPath = toLocalMetasoPath(src);
+            if (localPath !== src) {
                 $(element).attr('src', localPath);
+                preloadResources.push({ href: localPath, as: 'image', priority: 'low' });
+                replacedCount++;
             }
         });
-        
+
         // 检查现有的preload链接，避免重复
         const existingPreloads = new Set();
         $('link[rel="preload"]').each((index, element) => {
             const href = $(element).attr('href');
-            const filename = extractFilename(href);
-            if (filename) {
-                const localPath = '/static/metaso.cn_files/' + filename;
+            const localPath = toLocalMetasoPath(href);
+            if (localPath !== href) {
                 $(element).attr('href', localPath);
                 existingPreloads.add(localPath);
-                processedResources.add(filename);
                 replacedCount++;
-                logger.debug(`更新现有Preload: ${href} -> ${localPath}`);
             }
         });
         
@@ -509,6 +448,7 @@ app.options('*', (req, res) => {
     res.sendStatus(200);
 });
 
+// 创建代理中间件，目标为 https://metaso.cn
 // 创建代理中间件，目标为 https://metaso.cn
 app.use('/', proxy('https://metaso.cn', {
     // 在代理响应回调中移除 CSP 和 X-Frame-Options 头
@@ -549,7 +489,6 @@ app.use('/', proxy('https://metaso.cn', {
         console.log('最终响应头:', Object.keys(headers));
         return headers;
     },
-    
     // 处理HTML响应
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
         const contentType = proxyRes.headers['content-type'] || '';
@@ -557,32 +496,35 @@ app.use('/', proxy('https://metaso.cn', {
         console.log('Content-Type:', contentType);
         console.log('数据大小:', proxyResData.length);
 
-        // 统一对所有响应类型做 static-1.metaso.cn → /static/ 替换，彻底本地化
-        let body = proxyResData;
-        try {
-            if (contentType.includes('text/html')) {
-                // HTML响应：先做静态资源替换，再彻底移除侧边栏/广告并插入token
+        // 只对 HTML 响应做 processHtmlResponse，其他类型直接返回原始内容
+        if (contentType.includes('text/html')) {
+            try {
                 let html = proxyResData.toString('utf8').replace(/https?:\/\/static-1\.metaso\.cn\//g, '/static/');
                 html = processHtmlResponse(html, userReq.path);
                 return html;
-            } else if (contentType.includes('json')) {
-                // JSON响应：注入token字段
-                let json = proxyResData.toString('utf8').replace(/https?:\/\/static-1\.metaso\.cn\//g, '/static/');
-                try {
-                    let obj = JSON.parse(json);
-                    obj.token = 'mk-4A9944E6F3917711EFCF7B772BC3A5AE';
-                    return JSON.stringify(obj);
-                } catch(e) {
-                    return json;
-                }
-            } else if (contentType.includes('text') || contentType.includes('javascript') || contentType.includes('css') || contentType.includes('xml')) {
-                body = proxyResData.toString('utf8');
-                body = body.replace(/https?:\/\/static-1\.metaso\.cn\//g, '/static/');
+            } catch (e) {
+                console.error('HTML处理错误:', e);
+                return proxyResData;
             }
-        } catch (e) {
-            // ignore
+        } else if (contentType.includes('json')) {
+            // JSON响应：注入token字段
+            let json = proxyResData.toString('utf8').replace(/https?:\/\/static-1\.metaso\.cn\//g, '/static/');
+            try {
+                let obj = JSON.parse(json);
+                obj.token = 'mk-4A9944E6F3917711EFCF7B772BC3A5AE';
+                obj.data='"q": "谁是这个世界上最美丽的女人", "scope": "webpage";'
+                return JSON.stringify(obj);
+            } catch(e) {
+                return json;
+            }
+        } else if (contentType.includes('text') || contentType.includes('javascript') || contentType.includes('css') || contentType.includes('xml')) {
+            // 只做静态资源路径替换
+            let body = proxyResData.toString('utf8');
+            body = body.replace(/https?:\/\/static-1\.metaso\.cn\//g, '/static/');
+            return body;
         }
-        return body;
+        // 其他类型直接返回原始内容（Buffer）
+        return proxyResData;
     },
     
     // 代理请求选项
@@ -611,35 +553,16 @@ app.use('/', proxy('https://metaso.cn', {
             // 保证 referer/origin 指向本站，防止源站校验失败
             proxyReqOpts.headers['Referer'] = 'https://metaso.cn/';
             proxyReqOpts.headers['Origin'] = 'https://metaso.cn';
-            
-            proxyReqOpts.href='https://metaso.cn/' + srcReq.path;
-            // 日志
-            console.log('已为/search/请求query ' + srcReq.path + srcReq.url);
 
-
-
-        } else if (srcReq.path.includes('/api/') || srcReq.path.includes('/login/')) {
-            // 其他API同原逻辑
-            proxyReqOpts.headers['Authorization'] = 'Bearer mk-4A9944E6F3917711EFCF7B772BC3A5AE';
-            proxyReqOpts.headers['X-User-ID'] = '68775c6659a307e8ac864bf6';
-            proxyReqOpts.headers['X-Session-ID'] = 'e5874318e9ee41788605c88fbe43ab19';
-            proxyReqOpts.headers['X-Requested-With'] = 'XMLHttpRequest';
-            const authCookies = [
-                'uid=68775c6659a307e8ac864bf6',
-                'sid=e5874318e9ee41788605c88fbe43ab19',
-                'isLoggedIn=true',
-                'token=mk-4A9944E6F3917711EFCF7B772BC3A5AE'
-            ];
-            proxyReqOpts.headers['Cookie'] = authCookies.join('; ');
-            console.log('已为API请求 ' + srcReq.path + ' 添加认证信息 (Bearer mk-4A9944E6F3917711EFCF7B772BC3A5AE)');
-        }
-
-        console.log('\n=== 代理请求 ' + srcReq.path + ' ===');
-        
+              
+            return proxyReqOpts;
+        }     
+          
+        // 对其他请求，保持默认请求头
         return proxyReqOpts;
     }
 }));
-
+// 启动服务器
 // 启动服务器
 app.listen(PORT, '0.0.0.0', () => {
     logger.info(`=== metaso.cn 代理服务器已启动 ===`);
@@ -663,12 +586,12 @@ app.listen(PORT, '0.0.0.0', () => {
     if (!IS_PRODUCTION) {
         logger.debug('测试命令:');
         logger.debug(`curl http://localhost:${PORT} -I`);
-        logger.debug(`curl http://localhost:${PORT}/static/metaso.cn_files/06379910118566c4.css -I`);
     }
 });
 
 app.on('error', (err) => {
     logger.error('服务器错误:', err);
 });
+
 
 module.exports = app;

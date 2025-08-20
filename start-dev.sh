@@ -9,6 +9,7 @@ echo ""
 
 # 停止现有进程
 pkill -f "metaso-proxy" || true
+fuser -k 10101/tcp 
 sleep 1
 
 # 设置环境变量并启动

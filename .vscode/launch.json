@@ -4,14 +4,31 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "type": "",
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch chrome",
+            "url": "http://localhost:10101",
+            "webRoot": "${workspaceFolder}",
+            "port": 9222
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:10101",
+            "webRoot": "${workspaceFolder}",
+            "runtimeExecutable": "/usr/bin/google-chrome"
+            //"remoteDebuggingPort": 9222
+        },
+        {
+            "type": "firefox",
             "request": "launch",
             "name": "Launch firefox against localhost",
             "url": "http://localhost:10101",
             "webRoot": "${workspaceFolder}",
-            "runtimeExecutable": "/usr/bin/firefox"
+            "firefoxExecutable": "/usr/lib/firefox",
+            "remoteDebuggingPort": 9222
         }
     ]
 }

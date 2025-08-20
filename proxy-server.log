@@ -1,0 +1,160 @@
+nohup: 忽略输入
+[2025-08-19T07:52:21.567Z] [INFO] [DEV] === metaso.cn 代理服务器已启动 ===
+[2025-08-19T07:52:21.569Z] [INFO] [DEV] 环境: Development
+[2025-08-19T07:52:21.569Z] [INFO] [DEV] 日志级别: DEBUG
+[2025-08-19T07:52:21.569Z] [INFO] [DEV] 监听端口: 10101
+[2025-08-19T07:52:21.570Z] [INFO] [DEV] 访问地址: http://localhost:10101
+[2025-08-19T07:52:21.570Z] [INFO] [DEV] 静态资源: http://localhost:10101/static/
+[2025-08-19T07:52:21.570Z] [INFO] [DEV] 代理目标: https://metaso.cn
+[2025-08-19T07:52:21.570Z] [INFO] [DEV] ==============================
+[2025-08-19T07:52:21.570Z] [INFO] [DEV] 功能说明:
+[2025-08-19T07:52:21.571Z] [INFO] [DEV] - ✓ 移除CSP和X-Frame-Options头
+[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ 删除微信登录相关元素
+[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ 注入localStorage授权信息
+[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ 静态资源本地化服务
+[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ iframe兼容性处理
+[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ 所有页面登录状态保持
+[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ API请求CORS拦截
+[2025-08-19T07:52:21.573Z] [DEBUG] [DEV] 测试命令:
+[2025-08-19T07:52:21.573Z] [DEBUG] [DEV] curl http://localhost:10101 -I
+[2025-08-19T07:52:21.573Z] [DEBUG] [DEV] curl http://localhost:10101/static/metaso.cn_files/06379910118566c4.css -I
+Debugger listening on ws://127.0.0.1:9229/157a268a-9560-47f2-a648-74d75577eab0
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+http://localhost:10101/search/4112acf5-8cad-4009-8b4b-f4c2fe21a3aa?q=book
+
+=== 代理请求 /favicon.ico ===
+\n=== 处理响应头 /favicon.ico ===
+原始响应头: [
+  'x-powered-by',
+  'date',
+  'connection',
+  'accept-ranges',
+  'cache-control',
+  'last-modified',
+  'etag',
+  'x-frame-options',
+  'content-security-policy',
+  'x-content-type-options',
+  'x-xss-protection',
+  'strict-transport-security'
+]
+已移除响应头: [
+  'content-security-policy',
+  'x-frame-options',
+  'x-content-type-options'
+]
+最终响应头: [
+  'x-powered-by',
+  'date',
+  'connection',
+  'accept-ranges',
+  'cache-control',
+  'last-modified',
+  'etag',
+  'x-xss-protection',
+  'strict-transport-security',
+  'x-frame-options',
+  'access-control-allow-origin',
+  'access-control-allow-methods',
+  'access-control-allow-headers',
+  'access-control-allow-credentials'
+]
+
+=== 代理请求 /serviceWorker.js ===
+\n=== 处理响应头 /serviceWorker.js ===
+原始响应头: [
+  'x-powered-by',
+  'date',
+  'connection',
+  'accept',
+  'accept-charset',
+  'accept-language',
+  'cache-control',
+  'cookie',
+  'eagleeye-rpcid',
+  'eagleeye-traceid',
+  'host',
+  'if-modified-since',
+  'if-none-match',
+  'origin-agent-cluster',
+  'referer',
+  'remoteip',
+  'sec-fetch-dest',
+  'sec-fetch-mode',
+  'sec-fetch-site',
+  'service-worker',
+  'user-agent',
+  'web-server-type',
+  'wl-proxy-client-ip',
+  'x-client-ip',
+  'x-current-path',
+  'x-forwarded-cluster',
+  'x-forwarded-for',
+  'x-forwarded-host',
+  'x-forwarded-port',
+  'x-forwarded-proto',
+  'x-middleware-cache',
+  'x-real-ip',
+  'x-scheme',
+  'x-true-ip',
+  'accept-ranges',
+  'last-modified',
+  'etag',
+  'x-frame-options',
+  'content-security-policy',
+  'x-content-type-options',
+  'x-xss-protection',
+  'strict-transport-security'
+]
+已移除响应头: [
+  'content-security-policy',
+  'x-frame-options',
+  'x-content-type-options'
+]
+最终响应头: [
+  'x-powered-by',
+  'date',
+  'connection',
+  'accept',
+  'accept-charset',
+  'accept-language',
+  'cache-control',
+  'cookie',
+  'eagleeye-rpcid',
+  'eagleeye-traceid',
+  'host',
+  'if-modified-since',
+  'if-none-match',
+  'origin-agent-cluster',
+  'referer',
+  'remoteip',
+  'sec-fetch-dest',
+  'sec-fetch-mode',
+  'sec-fetch-site',
+  'service-worker',
+  'user-agent',
+  'web-server-type',
+  'wl-proxy-client-ip',
+  'x-client-ip',
+  'x-current-path',
+  'x-forwarded-cluster',
+  'x-forwarded-for',
+  'x-forwarded-host',
+  'x-forwarded-port',
+  'x-forwarded-proto',
+  'x-middleware-cache',
+  'x-real-ip',
+  'x-scheme',
+  'x-true-ip',
+  'accept-ranges',
+  'last-modified',
+  'etag',
+  'x-xss-protection',
+  'strict-transport-security',
+  'x-frame-options',
+  'access-control-allow-origin',
+  'access-control-allow-methods',
+  'access-control-allow-headers',
+  'access-control-allow-credentials'
+]
