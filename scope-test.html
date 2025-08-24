@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scope参数测试 - 编码 vs 不编码</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+        .test-section { margin: 20px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .test-link { 
+            display: block; margin: 10px 0; padding: 15px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; text-decoration: none; border-radius: 5px; 
+            transition: transform 0.2s;
+        }
+        .test-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .description { font-size: 14px; margin-top: 8px; opacity: 0.9; }
+        .current-params { background: #e7f3ff; padding: 15px; border-radius: 5px; border-left: 4px solid #007acc; }
+        .highlight { background: #fff3cd; padding: 10px; border-radius: 4px; border-left: 4px solid #ffc107; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Scope参数传递方式测试</h1>
+    <div class="highlight">
+        <strong>测试目标：</strong> 验证是否URL编码影响了"泥沙知识"参数的正确传递
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 当前页面参数解析结果</h2>
+        <div id="current-params" class="current-params">
+            正在解析参数...
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 测试链接 - URL编码 vs 直接传递</h2>
+        
+        <h3>方法1: URL编码方式（当前使用）</h3>
+        <a href="http://localhost:10101/?q=排沙洞运用限制条件&scope=%E6%B3%A5%E6%B2%99%E7%9F%A5%E8%AF%86" class="test-link">
+            <strong>🔗 编码传递：</strong> scope=%E6%B3%A5%E6%B2%99%E7%9F%A5%E8%AF%86
+            <div class="description">使用encodeURIComponent编码的"泥沙知识"</div>
+        </a>
+        
+        <h3>方法2: 直接中文方式（新测试）</h3>
+        <a href="http://localhost:10101/?q=排沙洞运用限制条件&scope=泥沙知识" class="test-link">
+            <strong>🎯 直接传递：</strong> scope=泥沙知识
+            <div class="description">直接使用中文，不进行URL编码</div>
+        </a>
+        
+        <h3>方法3: 控制组测试</h3>
+        <a href="http://localhost:10101/?q=排沙洞运用限制条件&scope=学术" class="test-link">
+            <strong>📚 学术范围：</strong> scope=学术
+            <div class="description">测试其他中文范围参数</div>
+        </a>
+        
+        <a href="http://localhost:10101/?q=排沙洞运用限制条件" class="test-link">
+            <strong>🌐 默认范围：</strong> 无scope参数
+            <div class="description">使用默认的全网搜索</div>
+        </a>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔍 参数编码测试工具</h2>
+        <div>
+            <button onclick="testEncoding()">测试编码/解码</button>
+            <div id="encoding-test" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 解析当前页面参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const q = urlParams.get('q');
+        const scope = urlParams.get('scope');
+        
+        // 显示当前参数
+        function displayCurrentParams() {
+            const paramsDiv = document.getElementById('current-params');
+            paramsDiv.innerHTML = `
+                <h3>当前URL参数：</h3>
+                <p><strong>查询词 (q):</strong> ${q || '无'}</p>
+                <p><strong>搜索范围 (scope):</strong> ${scope || '无'}</p>
+                <p><strong>原始URL:</strong> ${window.location.href}</p>
+                <p><strong>scope编码检测:</strong> ${scope ? (scope === decodeURIComponent(scope) ? '未编码或已解码' : '编码状态') : '无参数'}</p>
+            `;
+        }
+        
+        // 测试编码功能
+        function testEncoding() {
+            const testText = '泥沙知识';
+            const encoded = encodeURIComponent(testText);
+            const decoded = decodeURIComponent(encoded);
+            
+            document.getElementById('encoding-test').innerHTML = `
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                    <p><strong>原始文本:</strong> ${testText}</p>
+                    <p><strong>编码后:</strong> ${encoded}</p>
+                    <p><strong>解码后:</strong> ${decoded}</p>
+                    <p><strong>编码是否相等:</strong> ${testText === decoded ? '✅ 是' : '❌ 否'}</p>
+                </div>
+            `;
+        }
+        
+        // 页面加载时显示参数
+        displayCurrentParams();
+        
+        // 自动测试编码
+        testEncoding();
+        
+        console.log('🔧 Scope参数测试页面');
+        console.log('当前scope参数:', scope);
+        console.log('URLSearchParams.get()解析结果:', scope);
+    </script>
+</body>
+</html>
+</body>
+</html>

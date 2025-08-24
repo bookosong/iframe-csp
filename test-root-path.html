@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Root Path Test</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>根路径测试页面</h1>
+    <p>测试访问根路径时的行为</p>
+    
+    <div id="test-results">
+        <h2>测试结果：</h2>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function addResult(message, color = 'black') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.style.color = color;
+            div.style.margin = '5px 0';
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            results.appendChild(div);
+        }
+
+        // 记录初始状态
+        addResult(`页面加载，当前URL: ${window.location.href}`, 'blue');
+        
+        // 监听URL变化
+        let originalURL = window.location.href;
+        let checkCount = 0;
+        
+        function checkForRedirect() {
+            checkCount++;
+            if (window.location.href !== originalURL) {
+                addResult(`检测到URL变化: ${originalURL} -> ${window.location.href}`, 'red');
+                return;
+            }
+            
+            if (checkCount < 20) { // 检查10秒
+                setTimeout(checkForRedirect, 500);
+            } else {
+                addResult('✅ 10秒内未检测到自动重定向', 'green');
+            }
+        }
+        
+        setTimeout(checkForRedirect, 1000);
+        
+        // 测试不同的访问方式
+        setTimeout(() => {
+            addResult('=== 开始测试 ===');
+            
+            // 测试1: 直接访问根路径
+            addResult('测试1: 当前就是根路径访问');
+            
+            // 测试2: 模拟带参数的访问
+            const testUrl = 'http://localhost:10101/?q=test&scope=测试';
+            addResult(`测试2: 如果访问 ${testUrl} 会触发自动搜索`);
+            
+        }, 2000);
+    </script>
+</body>
+</html>

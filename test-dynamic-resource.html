@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>动态资源URL替换测试</title>
+</head>
+<body>
+    <h1>动态资源URL替换测试</h1>
+    
+    <!-- 测试图片元素 -->
+    <img src="https://metaso.cn/api/file/8633750210809888768/figures?type=1&filename=1_0.jpg&sessionId=8647799894604955648" alt="动态图片1">
+    
+    <!-- 测试另一个动态资源 -->
+    <img src="https://metaso.cn/api/file/8633734405728952320/documents?type=pdf&filename=test.pdf" alt="动态文档">
+    
+    <!-- 测试静态资源（不应该被替换为本地路径）-->
+    <img src="https://metaso.cn/_next/static/media/logo.png" alt="静态图片">
+    
+    <!-- 测试CSS背景图片 -->
+    <div style="background-image: url('https://metaso.cn/api/file/12345/background.jpg');">背景测试</div>
+    
+    <script>
+        console.log('测试页面加载完成');
+        console.log('检查图片URL是否被正确替换...');
+        
+        // 检查所有图片的src属性
+        document.querySelectorAll('img').forEach((img, index) => {
+            console.log(`图片 ${index + 1}:`, img.src);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scope和Kits参数测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .test-title {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .test-link {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .test-link:hover {
+            background: #0056b3;
+            text-decoration: none;
+            color: white;
+        }
+        .description {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        .parameter-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .parameter-info strong {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Scope和Kits参数功能测试</h1>
+        
+        <div class="parameter-info">
+            <strong>参数说明：</strong><br>
+            • <strong>scope</strong>: 搜索范围控制 (默认: '全网')<br>
+            • <strong>kits</strong>: 搜索方式控制 (默认: '极速', 或 '极速·思考' 如果查询内容复杂)<br>
+            • <strong>q</strong>: 搜索查询内容
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">1. 基础测试 - 默认参数</div>
+            <a href="http://localhost:10101/?q=AI人工智能发展趋势" class="test-link" target="_blank">
+                测试基础搜索（默认scope=全网，kits=极速·思考）
+            </a>
+            <div class="description">
+                测试URL: /?q=AI人工智能发展趋势<br>
+                预期行为: 自动设置scope为'全网'，kits为'极速·思考'（因为查询内容较复杂）
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">2. 自定义Scope测试</div>
+            <a href="http://localhost:10101/?q=编程学习&scope=学术" class="test-link" target="_blank">
+                测试学术范围搜索
+            </a>
+            <div class="description">
+                测试URL: /?q=编程学习&scope=学术<br>
+                预期行为: 设置搜索范围为'学术'，kits默认为'极速'
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">3. 自定义Kits测试</div>
+            <a href="http://localhost:10101/?q=Python教程&kits=深度" class="test-link" target="_blank">
+                测试深度搜索模式
+            </a>
+            <div class="description">
+                测试URL: /?q=Python教程&kits=深度<br>
+                预期行为: scope默认为'全网'，设置搜索方式为'深度'
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">4. 完整参数测试</div>
+            <a href="http://localhost:10101/?q=机器学习算法&scope=科技&kits=极速·思考" class="test-link" target="_blank">
+                测试完整参数组合
+            </a>
+            <div class="description">
+                测试URL: /?q=机器学习算法&scope=科技&kits=极速·思考<br>
+                预期行为: 设置搜索范围为'科技'，搜索方式为'极速·思考'
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">5. 简单查询测试</div>
+            <a href="http://localhost:10101/?q=天气&scope=全网&kits=极速" class="test-link" target="_blank">
+                测试简单查询（极速模式）
+            </a>
+            <div class="description">
+                测试URL: /?q=天气&scope=全网&kits=极速<br>
+                预期行为: 使用'全网'范围和'极速'模式进行简单查询
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">6. 边界情况测试</div>
+            <a href="http://localhost:10101/?q=测试&scope=&kits=" class="test-link" target="_blank">
+                测试空参数情况
+            </a>
+            <div class="description">
+                测试URL: /?q=测试&scope=&kits=<br>
+                预期行为: scope和kits参数为空时，应该使用默认值（全网，极速）
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
+            <h3 style="color: #856404; margin-top: 0;">🔍 测试说明</h3>
+            <ul style="color: #856404; line-height: 1.6;">
+                <li>点击上述测试链接，观察搜索页面的行为</li>
+                <li>检查浏览器开发者工具的控制台输出，查看参数设置日志</li>
+                <li>验证UI界面中的scope和kits元素是否被正确设置</li>
+                <li>确认搜索功能按预期参数执行</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 添加一些客户端日志
+        console.log('🧪 Scope和Kits参数测试页面已加载');
+        console.log('📝 测试页面说明：');
+        console.log('- scope参数控制搜索范围');
+        console.log('- kits参数控制搜索方式');
+        console.log('- 点击测试链接验证功能');
+    </script>
+</body>
+</html>

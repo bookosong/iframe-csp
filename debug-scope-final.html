@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试 Scope 参数</title>
+</head>
+<body>
+    <h1>调试 Scope 参数处理</h1>
+    <div id="debug-info"></div>
+    
+    <script>
+        // 检查URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const scope = urlParams.get('scope');
+        const q = urlParams.get('q');
+        
+        console.log('=== URL参数调试 ===');
+        console.log('原始 window.location.search:', window.location.search);
+        console.log('解析后的 scope:', scope);
+        console.log('解析后的 q:', q);
+        
+        if (scope) {
+            console.log('scope 字符编码信息:', {
+                scope: scope,
+                length: scope.length,
+                charCodes: scope.split('').map(c => c.charCodeAt(0)),
+                encoded: encodeURIComponent(scope)
+            });
+        }
+        
+        // 在页面上显示信息
+        const debugDiv = document.getElementById('debug-info');
+        debugDiv.innerHTML = `
+            <h2>URL参数解析结果：</h2>
+            <p><strong>原始URL查询字符串：</strong> ${window.location.search}</p>
+            <p><strong>scope参数：</strong> ${scope || '未找到'}</p>
+            <p><strong>q参数：</strong> ${q || '未找到'}</p>
+            ${scope ? `<p><strong>scope字符码：</strong> [${scope.split('').map(c => c.charCodeAt(0)).join(', ')}]</p>` : ''}
+            <p><strong>测试URL：</strong> <a href="http://localhost:10101/debug-scope-final.html?q=进水塔活动铅鱼&scope=泥沙知识">点击测试</a></p>
+        `;
+    </script>
+</body>
+</html>

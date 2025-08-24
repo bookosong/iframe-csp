@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精确控制自动搜索</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #dc3545;
+            color: white;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+        }
+        
+        .success {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            color: #155724;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border: 1px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .iframe-wrapper {
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+            height: 700px;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        button.success {
+            background: #28a745;
+        }
+        
+        button.success:hover:not(:disabled) {
+            background: #1e7e34;
+        }
+        
+        button.warning {
+            background: #ffc107;
+            color: #856404;
+        }
+        
+        button.warning:hover:not(:disabled) {
+            background: #e0a800;
+        }
+        
+        button.danger {
+            background: #dc3545;
+        }
+        
+        button.danger:hover:not(:disabled) {
+            background: #c82333;
+        }
+        
+        .test-results {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        
+        .log-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .log-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .log-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .log-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .step-controls {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .step-controls h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 精确控制自动搜索</h1>
+            <p>分步骤执行，避免触发意外的页面重定向</p>
+        </div>
+        
+        <div class="content">
+            <div class="error">
+                <h3>🚨 问题分析</h3>
+                <p>输入"book"后文本被清除，页面重新刷新，可能是因为：</p>
+                <ul>
+                    <li>触发了表单提交事件</li>
+                    <li>激活了自动补全或建议功能</li>
+                    <li>React状态更新导致页面重新渲染</li>
+                    <li>搜索API自动调用导致页面跳转</li>
+                </ul>
+            </div>
+            
+            <div class="controls">
+                <button onclick="loadPage()" id="loadBtn">加载页面</button>
+                <button onclick="inspectPage()" id="inspectBtn" disabled>检查页面结构</button>
+                <button onclick="onlyInput()" id="inputBtn" disabled class="warning">仅输入文本</button>
+                <button onclick="manualSubmit()" id="submitBtn" disabled class="success">手动提交</button>
+                <button onclick="clearLogs()">清除日志</button>
+                <button onclick="resetPage()" class="danger">重置页面</button>
+            </div>
+            
+            <div class="step-controls">
+                <h3>🔧 分步控制</h3>
+                <p>先检查页面结构，然后分别执行输入和提交操作，观察每一步的影响。</p>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="step1FindElements()" id="step1Btn" disabled>1️⃣ 查找元素</button>
+                    <button onclick="step2PrepareInput()" id="step2Btn" disabled>2️⃣ 准备输入</button>
+                    <button onclick="step3SetValue()" id="step3Btn" disabled>3️⃣ 设置值</button>
+                    <button onclick="step4TriggerEvents()" id="step4Btn" disabled>4️⃣ 触发事件</button>
+                    <button onclick="step5ClickButton()" id="step5Btn" disabled>5️⃣ 点击按钮</button>
+                </div>
+            </div>
+            
+            <div class="iframe-wrapper">
+                <iframe id="testFrame" src="about:blank"></iframe>
+            </div>
+            
+            <div class="info">
+                <h3>📋 精确控制策略</h3>
+                <ol>
+                    <li><strong>页面检查</strong>：先分析页面结构和事件绑定</li>
+                    <li><strong>仅输入</strong>：只设置文本值，不触发任何事件</li>
+                    <li><strong>事件控制</strong>：手动控制何时触发哪些事件</li>
+                    <li><strong>分步执行</strong>：每步都检查页面状态变化</li>
+                    <li><strong>阻止自动提交</strong>：避免意外的表单提交</li>
+                </ol>
+            </div>
+            
+            <div class="test-results" id="testResults">
+                <div class="log-entry log-info">📝 操作日志将在这里显示...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let iframeLoaded = false;
+        let pageElements = {
+            searchBox: null,
+            submitButton: null,
+            form: null
+        };
+        let stepData = {};
+        
+        function addLog(message, type = 'info') {
+            const resultsDiv = document.getElementById('testResults');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            resultsDiv.appendChild(logEntry);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        function clearLogs() {
+            document.getElementById('testResults').innerHTML = '<div class="log-entry log-info">📝 日志已清除</div>';
+        }
+        
+        function updateButtonStates() {
+            document.getElementById('inspectBtn').disabled = !iframeLoaded;
+            document.getElementById('inputBtn').disabled = !iframeLoaded;
+            document.getElementById('submitBtn').disabled = !iframeLoaded;
+            document.getElementById('step1Btn').disabled = !iframeLoaded;
+        }
+        
+        function loadPage() {
+            addLog('开始加载Metaso.cn页面...', 'info');
+            const iframe = document.getElementById('testFrame');
+            iframeLoaded = false;
+            pageElements = { searchBox: null, submitButton: null, form: null };
+            stepData = {};
+            
+            // 重置所有步骤按钮
+            ['step2Btn', 'step3Btn', 'step4Btn', 'step5Btn'].forEach(id => {
+                document.getElementById(id).disabled = true;
+            });
+            
+            iframe.onload = function() {
+                addLog('✅ 页面加载完成', 'success');
+                iframeLoaded = true;
+                updateButtonStates();
+                
+                setTimeout(() => {
+                    addLog('✅ 页面已稳定，可以开始检查', 'success');
+                }, 2000);
+            };
+            
+            iframe.onerror = function() {
+                addLog('❌ 页面加载失败', 'error');
+                iframeLoaded = false;
+                updateButtonStates();
+            };
+            
+            iframe.src = 'http://localhost:10101/';
+        }
+        
+        function resetPage() {
+            addLog('🔄 重置页面状态...', 'info');
+            const iframe = document.getElementById('testFrame');
+            iframe.src = 'about:blank';
+            iframeLoaded = false;
+            pageElements = { searchBox: null, submitButton: null, form: null };
+            stepData = {};
+            updateButtonStates();
+            
+            // 重置所有步骤按钮
+            ['step2Btn', 'step3Btn', 'step4Btn', 'step5Btn'].forEach(id => {
+                document.getElementById(id).disabled = true;
+            });
+            
+            setTimeout(() => {
+                addLog('✅ 页面已重置', 'success');
+            }, 1000);
+        }
+        
+        function inspectPage() {
+            if (!iframeLoaded) {
+                addLog('❌ 页面未加载', 'error');
+                return;
+            }
+            
+            addLog('🔍 开始检查页面结构...', 'info');
+            
+            try {
+                const iframe = document.getElementById('testFrame');
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const iframeWindow = iframe.contentWindow;
+                
+                if (!iframeDoc) {
+                    addLog('❌ 无法访问iframe内容', 'error');
+                    return;
+                }
+                
+                // 检查搜索框
+                const searchSelectors = [
+                    'textarea[class*="search-consult-textarea"]',
+                    'textarea[placeholder*="搜索"]',
+                    'textarea[placeholder*="问"]',
+                    'textarea',
+                    'input[type="text"]'
+                ];
+                
+                let foundSearchBox = false;
+                for (const selector of searchSelectors) {
+                    const elements = iframeDoc.querySelectorAll(selector);
+                    for (const el of elements) {
+                        if (el.offsetWidth > 0 && el.offsetHeight > 0) {
+                            pageElements.searchBox = el;
+                            addLog(`✅ 找到搜索框: ${selector}`, 'success');
+                            addLog(`   - 标签: ${el.tagName}`, 'info');
+                            addLog(`   - 类名: ${el.className}`, 'info');
+                            addLog(`   - 占位符: ${el.placeholder || '无'}`, 'info');
+                            addLog(`   - 当前值: "${el.value}"`, 'info');
+                            foundSearchBox = true;
+                            break;
+                        }
+                    }
+                    if (foundSearchBox) break;
+                }
+                
+                if (!foundSearchBox) {
+                    addLog('❌ 未找到搜索框', 'error');
+                }
+                
+                // 检查提交按钮
+                const buttonSelectors = [
+                    'button[class*="send-arrow-button"]',
+                    'button[class*="MuiIconButton"]',
+                    'button[type="submit"]',
+                    'button'
+                ];
+                
+                let foundButton = false;
+                for (const selector of buttonSelectors) {
+                    const elements = iframeDoc.querySelectorAll(selector);
+                    for (const el of elements) {
+                        if (el.offsetWidth > 0 && el.offsetHeight > 0) {
+                            pageElements.submitButton = el;
+                            addLog(`✅ 找到提交按钮: ${selector}`, 'success');
+                            addLog(`   - 类名: ${el.className}`, 'info');
+                            addLog(`   - 类型: ${el.type || '无'}`, 'info');
+                            addLog(`   - 文本: "${el.textContent.trim()}"`, 'info');
+                            foundButton = true;
+                            break;
+                        }
+                    }
+                    if (foundButton) break;
+                }
+                
+                if (!foundButton) {
+                    addLog('❌ 未找到提交按钮', 'error');
+                }
+                
+                // 检查表单
+                const forms = iframeDoc.querySelectorAll('form');
+                if (forms.length > 0) {
+                    pageElements.form = forms[0];
+                    addLog(`✅ 找到表单: ${forms.length} 个`, 'success');
+                    addLog(`   - 动作: ${forms[0].action || '无'}`, 'info');
+                    addLog(`   - 方法: ${forms[0].method || 'GET'}`, 'info');
+                } else {
+                    addLog('⚠️ 未找到表单元素', 'warning');
+                }
+                
+                // 检查事件监听器
+                if (pageElements.searchBox) {
+                    try {
+                        // getEventListeners 仅在Chrome开发者工具中可用
+                        const events = (typeof getEventListeners !== 'undefined') ? getEventListeners(pageElements.searchBox) : {};
+                        if (Object.keys(events).length > 0) {
+                            addLog(`⚠️ 搜索框绑定了事件: ${Object.keys(events).join(', ')}`, 'warning');
+                        } else {
+                            addLog('✅ 搜索框未检测到事件监听器', 'success');
+                        }
+                    } catch (error) {
+                        addLog('ℹ️ 事件监听器检查跳过（需要开发者工具）', 'info');
+                    }
+                }
+                
+                addLog('🎉 页面检查完成', 'success');
+                
+            } catch (error) {
+                addLog('❌ 页面检查失败: ' + error.message, 'error');
+            }
+        }
+        
+        function onlyInput() {
+            if (!pageElements.searchBox) {
+                addLog('❌ 请先检查页面找到搜索框', 'error');
+                return;
+            }
+            
+            addLog('📝 仅设置输入值，不触发任何事件...', 'info');
+            
+            try {
+                const originalValue = pageElements.searchBox.value;
+                addLog(`   - 原始值: "${originalValue}"`, 'info');
+                
+                // 仅设置值，不触发任何事件
+                pageElements.searchBox.value = 'book';
+                
+                addLog(`   - 设置后值: "${pageElements.searchBox.value}"`, 'info');
+                addLog('✅ 输入值设置完成，未触发任何事件', 'success');
+                addLog('💡 请观察页面是否有变化', 'warning');
+                
+                // 检查值是否被清除
+                setTimeout(() => {
+                    if (pageElements.searchBox && pageElements.searchBox.value !== 'book') {
+                        addLog(`❌ 值被自动清除: "${pageElements.searchBox.value}"`, 'error');
+                    } else if (pageElements.searchBox) {
+                        addLog('✅ 值保持稳定', 'success');
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                addLog('❌ 设置输入值失败: ' + error.message, 'error');
+            }
+        }
+        
+        function manualSubmit() {
+            if (!pageElements.submitButton) {
+                addLog('❌ 请先检查页面找到提交按钮', 'error');
+                return;
+            }
+            
+            addLog('🖱️ 手动点击提交按钮...', 'info');
+            
+            try {
+                // 检查当前搜索框的值
+                if (pageElements.searchBox) {
+                    addLog(`   - 当前搜索框值: "${pageElements.searchBox.value}"`, 'info');
+                }
+                
+                // 点击按钮
+                pageElements.submitButton.click();
+                addLog('✅ 已点击提交按钮', 'success');
+                
+                // 监测页面变化
+                setTimeout(() => {
+                    addLog('🔍 检查页面响应...', 'info');
+                    
+                    const iframe = document.getElementById('testFrame');
+                    const currentUrl = iframe.contentWindow ? iframe.contentWindow.location.href : '无法获取';
+                    addLog(`   - 当前URL: ${currentUrl}`, 'info');
+                    
+                    if (currentUrl.includes('search') || currentUrl.includes('book')) {
+                        addLog('✅ 检测到搜索相关的URL变化', 'success');
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                addLog('❌ 点击提交按钮失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 分步执行功能
+        function step1FindElements() {
+            addLog('1️⃣ 步骤1：查找页面元素...', 'info');
+            inspectPage();
+            
+            if (pageElements.searchBox && pageElements.submitButton) {
+                document.getElementById('step2Btn').disabled = false;
+                addLog('✅ 步骤1完成，可以进行步骤2', 'success');
+            } else {
+                addLog('❌ 步骤1失败，无法继续', 'error');
+            }
+        }
+        
+        function step2PrepareInput() {
+            addLog('2️⃣ 步骤2：准备输入（聚焦元素）...', 'info');
+            
+            try {
+                pageElements.searchBox.focus();
+                stepData.originalValue = pageElements.searchBox.value;
+                addLog(`   - 已聚焦搜索框`, 'success');
+                addLog(`   - 原始值: "${stepData.originalValue}"`, 'info');
+                
+                document.getElementById('step3Btn').disabled = false;
+                addLog('✅ 步骤2完成，可以进行步骤3', 'success');
+                
+            } catch (error) {
+                addLog('❌ 步骤2失败: ' + error.message, 'error');
+            }
+        }
+        
+        function step3SetValue() {
+            addLog('3️⃣ 步骤3：设置输入值...', 'info');
+            
+            try {
+                pageElements.searchBox.value = 'book';
+                addLog(`   - 值已设置为: "${pageElements.searchBox.value}"`, 'success');
+                
+                // 等待检查值是否稳定
+                setTimeout(() => {
+                    if (pageElements.searchBox.value === 'book') {
+                        addLog('✅ 值保持稳定，可以进行步骤4', 'success');
+                        document.getElementById('step4Btn').disabled = false;
+                    } else {
+                        addLog(`❌ 值被自动改变为: "${pageElements.searchBox.value}"`, 'error');
+                    }
+                }, 500);
+                
+            } catch (error) {
+                addLog('❌ 步骤3失败: ' + error.message, 'error');
+            }
+        }
+        
+        function step4TriggerEvents() {
+            addLog('4️⃣ 步骤4：触发输入事件...', 'info');
+            
+            try {
+                // 触发必要的事件
+                const inputEvent = new Event('input', { bubbles: true });
+                pageElements.searchBox.dispatchEvent(inputEvent);
+                addLog('   - 已触发 input 事件', 'info');
+                
+                setTimeout(() => {
+                    const changeEvent = new Event('change', { bubbles: true });
+                    pageElements.searchBox.dispatchEvent(changeEvent);
+                    addLog('   - 已触发 change 事件', 'info');
+                    
+                    // 检查页面状态
+                    setTimeout(() => {
+                        if (pageElements.searchBox.value === 'book') {
+                            addLog('✅ 事件触发后值保持稳定', 'success');
+                            document.getElementById('step5Btn').disabled = false;
+                            addLog('✅ 步骤4完成，可以进行步骤5', 'success');
+                        } else {
+                            addLog(`❌ 事件触发后值变为: "${pageElements.searchBox.value}"`, 'error');
+                        }
+                    }, 500);
+                    
+                }, 300);
+                
+            } catch (error) {
+                addLog('❌ 步骤4失败: ' + error.message, 'error');
+            }
+        }
+        
+        function step5ClickButton() {
+            addLog('5️⃣ 步骤5：点击提交按钮...', 'info');
+            
+            try {
+                addLog(`   - 点击前搜索框值: "${pageElements.searchBox.value}"`, 'info');
+                
+                pageElements.submitButton.click();
+                addLog('✅ 已点击提交按钮', 'success');
+                
+                // 监测后续变化
+                let checkCount = 0;
+                const checkInterval = setInterval(() => {
+                    checkCount++;
+                    
+                    try {
+                        const iframe = document.getElementById('testFrame');
+                        const currentUrl = iframe.contentWindow ? iframe.contentWindow.location.href : '';
+                        
+                        addLog(`   - 检查 ${checkCount}: URL = ${currentUrl}`, 'info');
+                        
+                        if (currentUrl.includes('search') || currentUrl.includes('book')) {
+                            addLog('🎉 检测到搜索跳转成功！', 'success');
+                            clearInterval(checkInterval);
+                        } else if (checkCount >= 10) {
+                            addLog('⏰ 检查超时，可能未发生跳转', 'warning');
+                            clearInterval(checkInterval);
+                        }
+                    } catch (e) {
+                        addLog('   - 检查过程中发生错误: ' + e.message, 'warning');
+                        clearInterval(checkInterval);
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                addLog('❌ 步骤5失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 页面加载完成后的初始化
+        window.onload = function() {
+            addLog('🎯 精确控制自动搜索测试页面已加载', 'info');
+            addLog('📋 使用分步控制避免意外的页面重定向', 'warning');
+            updateButtonStates();
+        };
+    </script>
+</body>
+</html>

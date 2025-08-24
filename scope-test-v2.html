@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scope Parameter Test v2</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>测试 Scope 参数功能 v2</h1>
+    
+    <div>
+        <h2>测试链接：</h2>
+        <ul>
+            <li><a href="http://localhost:10101/?scope=泥沙知识&kits=精确搜索&q=人工智能" target="_blank">
+                测试1: scope=泥沙知识 + kits=精确搜索 + q=人工智能
+            </a></li>
+            
+            <li><a href="http://localhost:10101/?scope=学术&kits=深度搜索&q=机器学习" target="_blank">
+                测试2: scope=学术 + kits=深度搜索 + q=机器学习
+            </a></li>
+            
+            <li><a href="http://localhost:10101/?scope=文库&q=深度学习" target="_blank">
+                测试3: scope=文库 + q=深度学习
+            </a></li>
+            
+            <li><a href="http://localhost:10101/?q=默认搜索" target="_blank">
+                测试4: 默认参数 (全网)
+            </a></li>
+        </ul>
+    </div>
+    
+    <div>
+        <h2>使用说明：</h2>
+        <p>点击上述链接，查看：</p>
+        <ul>
+            <li>1. 页面加载后，搜索范围是否正确切换到指定的scope (如"泥沙知识"、"学术"、"文库")</li>
+            <li>2. 搜索方法是否正确设置 (如"精确搜索"、"深度搜索")</li>
+            <li>3. 控制台日志中是否显示参数设置过程</li>
+        </ul>
+        
+        <p><strong>修复状态：</strong></p>
+        <p>✅ setupScope 函数已重写，现在使用正确的标签按钮选择器</p>
+        <p>✅ 模板字符串语法错误已修复</p>
+        <p>✅ Unicode字符问题已解决</p>
+    </div>
+    
+    <div>
+        <h2>预期结果：</h2>
+        <p>✅ 页面应该显示正确的搜索范围，而不是默认的"全网"</p>
+        <p>✅ 控制台应该显示 setupScope 和 setupKits 的执行日志</p>
+    </div>
+</body>
+</html>

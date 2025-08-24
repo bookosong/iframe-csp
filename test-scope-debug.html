@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scope参数调试测试</title>
+</head>
+<body>
+    <h1>Scope参数调试测试</h1>
+    <div id="result"></div>
+    
+    <script>
+        // 获取URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const scope = urlParams.get('scope');
+        const q = urlParams.get('q');
+        
+        console.log('URL参数:', { scope, q });
+        
+        // 显示结果
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `
+            <p><strong>查询参数 (q):</strong> ${q || '未设置'}</p>
+            <p><strong>范围参数 (scope):</strong> ${scope || '未设置'}</p>
+            <p><strong>当前URL:</strong> ${window.location.href}</p>
+        `;
+        
+        // 测试代理服务器的JavaScript注入
+        if (scope && scope !== '全网') {
+            console.log('🔧 检测到非默认scope参数:', scope);
+            
+            // 模拟查找aria-label元素
+            setTimeout(() => {
+                const buttons = document.querySelectorAll('button[aria-label*="范围"]');
+                console.log('找到的aria-label按钮数量:', buttons.length);
+                buttons.forEach((btn, index) => {
+                    console.log(`按钮${index + 1}:`, btn.getAttribute('aria-label'));
+                });
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

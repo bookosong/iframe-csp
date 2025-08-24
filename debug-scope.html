@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <        <h3>观察要点：</h3>
+        <ol>
+            <li>控制台是否输出：<code>[SearchParams] 设置搜索范围: 泥沙知识</code></li>
+            <li>控制台是否输出：<code>[SearchParams] 找到目标专题: 泥沙知识</code></li>
+            <li>控制台是否显示两种类型的元素搜索过程</li>
+            <li>页面是否正确响应专题或域选择</li>
+        </ol>
+        
+        <h3>预期结果：</h3>
+        <p>✅ 页面加载后应该自动执行搜索</p>
+        <p>✅ "泥沙知识"应该作为专题被找到并点击</p>
+        <p>✅ 域标签(学术、文库)应该正常切换</p>
+        <p>✅ 控制台应该显示详细的调试信息</p>
+        
+        <h3>修复状态：</h3>
+        <p>🎯 问题定位：发现"泥沙知识"是专题标签，不是搜索域标签</p>
+        <p>✅ 解决方案：更新setupScope函数同时支持域标签和专题标签</p>
+        <p>✅ 实现策略：先搜索域标签，失败后搜索专题标签</p>pe 功能</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>调试 Scope 参数功能</h1>
+    
+    <div>
+        <h2>测试说明：</h2>
+        <p>打开浏览器开发者工具，查看控制台输出，然后点击测试链接。</p>
+        
+        <h3>测试链接：</h3>
+        <ul>
+            <li>
+                <a href="http://localhost:10101/?scope=泥沙知识&auto_search=人工智能" target="_blank" style="font-size: 18px; color: red;">
+                    🔴 测试: scope=泥沙知识 + auto_search=人工智能 (专题)
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:10101/?scope=学术&auto_search=人工智能" target="_blank" style="font-size: 18px; color: blue;">
+                    � 测试: scope=学术 + auto_search=人工智能 (域标签)
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:10101/?scope=文库&auto_search=深度学习" target="_blank" style="font-size: 18px; color: green;">
+                    🟢 测试: scope=文库 + auto_search=深度学习 (域标签)
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:10101/?scope=全网&auto_search=机器学习" target="_blank" style="font-size: 18px; color: orange;">
+                    🟡 测试: scope=全网 + auto_search=机器学习 (默认)
+                </a>
+            </li>
+        </ul>
+        
+        <p><strong>发现：</strong> "泥沙知识" 是一个专题标签，不是搜索域标签！</p>
+        <p><strong>搜索域标签：</strong> 全网, 文库, 学术, 图片, 视频, 播客</p>
+        <p><strong>专题标签：</strong> 泥沙知识, 监测知识, 学习 等</p>
+        
+        <h3>观察要点：</h3>
+        <ol>
+            <li>控制台是否输出：<code>[SearchParams] 设置搜索范围: 泥沙知识</code></li>
+            <li>控制台是否输出：<code>[SearchParams] 找到 X 个标签</code></li>
+            <li>控制台是否输出：<code>[SearchParams] 找到目标范围标签: 泥沙知识</code></li>
+            <li>页面上方的搜索范围是否从"全网"变为"泥沙知识"</li>
+        </ol>
+        
+        <h3>预期行为：</h3>
+        <p>✅ 页面加载后应该自动执行搜索</p>
+        <p>✅ 搜索范围应该切换到"泥沙知识"</p>
+        <p>✅ 控制台应该显示详细的调试信息</p>
+    </div>
+    
+    <script>
+        console.log('🟢 调试页面已加载');
+        console.log('🟢 当前URL:', window.location.href);
+        
+        // 添加页面加载完成后的检查
+        window.addEventListener('load', function() {
+            console.log('🟢 页面加载完成');
+            console.log('🟢 URLParams:', new URLSearchParams(window.location.search).get('scope'));
+        });
+    </script>
+</body>
+</html>

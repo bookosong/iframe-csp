@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cookie清除测试</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Cookie清除功能测试</h1>
+    
+    <div id="test-steps">
+        <h2>测试步骤：</h2>
+        <ol>
+            <li>首先访问带参数的URL设置cookie</li>
+            <li>然后访问根路径验证cookie是否被清除</li>
+        </ol>
+    </div>
+
+    <div id="test-controls">
+        <h2>测试控制：</h2>
+        <button onclick="testStep1()">步骤1: 设置Cookie参数</button>
+        <button onclick="testStep2()">步骤2: 访问根路径清除Cookie</button>
+        <button onclick="checkCookies()">检查当前Cookie</button>
+    </div>
+
+    <div id="results">
+        <h2>测试结果：</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        function log(message, color = 'black') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.style.color = color;
+            entry.style.margin = '5px 0';
+            entry.style.fontFamily = 'monospace';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+        }
+
+        function getCookieValue(name) {
+            const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : null;
+        }
+
+        function checkCookies() {
+            const scope = getCookieValue('metaso_search_scope');
+            const kits = getCookieValue('metaso_search_kits');
+            
+            log(`当前URL: ${window.location.href}`, 'blue');
+            log(`Cookie - scope: ${scope || 'null'}`, scope ? 'green' : 'gray');
+            log(`Cookie - kits: ${kits || 'null'}`, kits ? 'green' : 'gray');
+            log('--- 分隔线 ---', 'gray');
+        }
+
+        function testStep1() {
+            log('🔧 开始步骤1: 访问带参数的URL设置cookie', 'blue');
+            const testUrl = 'http://localhost:10101/?q=测试查询&scope=测试范围&kits=测试工具集';
+            window.location.href = testUrl;
+        }
+
+        function testStep2() {
+            log('🧹 开始步骤2: 访问根路径清除cookie', 'orange');
+            const rootUrl = 'http://localhost:10101/';
+            window.location.href = rootUrl;
+        }
+
+        // 页面加载时自动检查
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('📋 页面加载完成，检查当前状态:', 'blue');
+                checkCookies();
+                
+                // 如果是根路径且没有参数，额外等待一下再检查
+                if (window.location.pathname === '/' && !window.location.search) {
+                    setTimeout(() => {
+                        log('⏱️  额外等待后再次检查cookie状态:', 'purple');
+                        checkCookies();
+                    }, 2000);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

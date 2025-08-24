@@ -1,0 +1,8 @@
+让我们继续完善代理程序带参数search功能
+当用户发送格式如 
+http://localhost:10101/search/8646540507732537344?q=book
+的参数时，其中/与?之间的参数为userID，'q='后面为query， 请按照默认流程处理。
+当用户传递格式如http://localhost:10101/search/id?q=book的短ID格式时，
+请按照http://localhost:10101/search/48d57619-5fd1-4924-beed-04340cafbcc5?q=book
+的格式生成动态userID，向源网站申请https://metaso.cn/search/48d57619-5fd1-4924-beed-04340cafbcc5?q=book，捕捉返回newuserID,格式类似8646540507732537344
+然后重定向到http://localhost:10101/search/newuserID?q=book

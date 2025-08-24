@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试默认Kits参数</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .test-url {
+            font-family: monospace;
+            background: #f5f5f5;
+            padding: 5px;
+            border-radius: 3px;
+            display: block;
+            margin: 5px 0;
+        }
+        .test-button {
+            background: #007acc;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #005a9e;
+        }
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>测试默认Kits参数设置</h1>
+    <p>验证修改后的代理服务器是否正确将默认kits参数设置为 <strong>"极速·思考"</strong></p>
+
+    <div class="test-section">
+        <div class="test-title">测试1: 不指定kits参数（应该默认为"极速·思考"）</div>
+        <div class="test-url">http://localhost:8080/search?q=测试默认kits参数</div>
+        <button class="test-button" onclick="openTest1()">在新标签页打开</button>
+        <button class="test-button" onclick="loadTest1()">在iframe中加载</button>
+        <iframe id="frame1" style="display:none;"></iframe>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">测试2: 明确指定kits为"极速·思考"</div>
+        <div class="test-url">http://localhost:8080/search?q=测试指定kits参数&kits=极速·思考</div>
+        <button class="test-button" onclick="openTest2()">在新标签页打开</button>
+        <button class="test-button" onclick="loadTest2()">在iframe中加载</button>
+        <iframe id="frame2" style="display:none;"></iframe>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">测试3: 指定kits为"极速"</div>
+        <div class="test-url">http://localhost:8080/search?q=测试极速参数&kits=极速</div>
+        <button class="test-button" onclick="openTest3()">在新标签页打开</button>
+        <button class="test-button" onclick="loadTest3()">在iframe中加载</button>
+        <iframe id="frame3" style="display:none;"></iframe>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">测试4: 指定kits为"长思考·R1"</div>
+        <div class="test-url">http://localhost:8080/search?q=测试长思考参数&kits=长思考·R1</div>
+        <button class="test-button" onclick="openTest4()">在新标签页打开</button>
+        <button class="test-button" onclick="loadTest4()">在iframe中加载</button>
+        <iframe id="frame4" style="display:none;"></iframe>
+    </div>
+
+    <script>
+        function openTest1() {
+            window.open('http://localhost:8080/search?q=测试默认kits参数', '_blank');
+        }
+
+        function openTest2() {
+            window.open('http://localhost:8080/search?q=测试指定kits参数&kits=极速·思考', '_blank');
+        }
+
+        function openTest3() {
+            window.open('http://localhost:8080/search?q=测试极速参数&kits=极速', '_blank');
+        }
+
+        function openTest4() {
+            window.open('http://localhost:8080/search?q=测试长思考参数&kits=长思考·R1', '_blank');
+        }
+
+        function loadTest1() {
+            const frame = document.getElementById('frame1');
+            frame.src = 'http://localhost:8080/search?q=测试默认kits参数';
+            frame.style.display = 'block';
+        }
+
+        function loadTest2() {
+            const frame = document.getElementById('frame2');
+            frame.src = 'http://localhost:8080/search?q=测试指定kits参数&kits=极速·思考';
+            frame.style.display = 'block';
+        }
+
+        function loadTest3() {
+            const frame = document.getElementById('frame3');
+            frame.src = 'http://localhost:8080/search?q=测试极速参数&kits=极速';
+            frame.style.display = 'block';
+        }
+
+        function loadTest4() {
+            const frame = document.getElementById('frame4');
+            frame.src = 'http://localhost:8080/search?q=测试长思考参数&kits=长思考·R1';
+            frame.style.display = 'block';
+        }
+
+        // 检查服务器状态
+        function checkServerStatus() {
+            fetch('http://localhost:8080/')
+                .then(() => {
+                    document.getElementById('status').textContent = '✅ 代理服务器已启动';
+                    document.getElementById('status').style.color = 'green';
+                })
+                .catch(() => {
+                    document.getElementById('status').textContent = '❌ 代理服务器未启动，请先启动服务器';
+                    document.getElementById('status').style.color = 'red';
+                });
+        }
+
+        // 页面加载时检查服务器状态
+        window.onload = checkServerStatus;
+    </script>
+
+    <div class="test-section">
+        <div class="test-title">服务器状态</div>
+        <div id="status">正在检查服务器状态...</div>
+        <p><strong>启动服务器命令:</strong></p>
+        <div class="test-url">cd /home/book/iframe-csp && PORT=8080 node metaso-proxy-autosearch.js</div>
+    </div>
+</body>
+</html>

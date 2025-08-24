@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API层面Scope参数注入测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .test-header {
+            color: #2c5aa0;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .test-header::before {
+            content: "🔬";
+            margin-right: 8px;
+        }
+        .scope-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .scope-btn {
+            padding: 8px 16px;
+            border: 2px solid #2c5aa0;
+            background: white;
+            color: #2c5aa0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .scope-btn.active {
+            background: #2c5aa0;
+            color: white;
+        }
+        .scope-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(44,90,160,0.3);
+        }
+        .search-container {
+            margin: 20px 0;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .search-btn {
+            padding: 12px 24px;
+            background: #2c5aa0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .search-btn:hover {
+            background: #1e3d6f;
+        }
+        .results-area {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            min-height: 200px;
+            border: 1px solid #e9ecef;
+        }
+        .log-item {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-info { background: #e3f2fd; color: #1565c0; }
+        .log-success { background: #e8f5e8; color: #2e7d32; }
+        .log-warning { background: #fff3e0; color: #f57c00; }
+        .log-error { background: #ffebee; color: #c62828; }
+        .iframe-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .iframe-container iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-ready { background: #4caf50; }
+        .status-testing { background: #ff9800; animation: pulse 1s infinite; }
+        .status-error { background: #f44336; }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 API层面Scope参数注入测试</h1>
+        <p>测试代理服务器是否能在API层面成功拦截并注入scope参数</p>
+    </div>
+
+    <div class="test-container">
+        <div class="test-section">
+            <div class="test-header">
+                <span class="status-indicator status-ready"></span>
+                1. Scope参数设置
+            </div>
+            <p>选择要测试的scope参数：</p>
+            <div class="scope-buttons">
+                <button class="scope-btn active" data-scope="全网" data-kits="极速">全网 (默认)</button>
+                <button class="scope-btn" data-scope="泥沙知识" data-kits="极速">泥沙知识</button>
+                <button class="scope-btn" data-scope="全网" data-kits="精准">全网-精准</button>
+                <button class="scope-btn" data-scope="泥沙知识" data-kits="精准">泥沙知识-精准</button>
+            </div>
+            <div id="current-params" style="margin-top: 10px; padding: 10px; background: #f0f8ff; border-radius: 5px;">
+                当前参数: scope=全网, kits=极速
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-header">
+                <span class="status-indicator status-ready"></span>
+                2. 搜索测试
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchQuery" value="人工智能" placeholder="输入搜索关键词...">
+                <button class="search-btn" onclick="performSearch()">🔍 执行搜索（API拦截测试）</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-header">
+                <span class="status-indicator status-ready"></span>
+                3. 测试结果
+            </div>
+            <div class="results-area" id="results">
+                等待测试执行...
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <span class="status-indicator status-ready"></span>
+            4. Metaso页面测试 (带参数)
+        </div>
+        <p>在iframe中打开metaso页面，验证参数传递：</p>
+        <button onclick="loadMetasoWithParams()" style="margin-bottom: 10px;" class="search-btn">
+            📄 加载Metaso页面（带当前参数）
+        </button>
+        <div class="iframe-container" id="iframe-container" style="display: none;">
+            <iframe id="metaso-iframe" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        let currentScope = '全网';
+        let currentKits = '极速';
+
+        // 初始化scope按钮事件
+        document.querySelectorAll('.scope-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 移除所有active类
+                document.querySelectorAll('.scope-btn').forEach(b => b.classList.remove('active'));
+                // 添加当前按钮的active类
+                this.classList.add('active');
+                
+                // 更新当前参数
+                currentScope = this.dataset.scope;
+                currentKits = this.dataset.kits;
+                
+                // 更新显示
+                document.getElementById('current-params').textContent = 
+                    '当前参数: scope=' + currentScope + ', kits=' + currentKits;
+                
+                // 保存到sessionStorage和Cookie（供API拦截器使用）
+                if (currentScope && currentScope !== '全网') {
+                    sessionStorage.setItem('metaso_search_scope', currentScope);
+                    document.cookie = 'metaso_search_scope=' + encodeURIComponent(currentScope) + '; path=/; SameSite=Lax';
+                } else {
+                    sessionStorage.removeItem('metaso_search_scope');
+                    document.cookie = 'metaso_search_scope=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                }
+                
+                if (currentKits && currentKits !== '极速') {
+                    sessionStorage.setItem('metaso_search_kits', currentKits);
+                    document.cookie = 'metaso_search_kits=' + encodeURIComponent(currentKits) + '; path=/; SameSite=Lax';
+                } else {
+                    sessionStorage.removeItem('metaso_search_kits');
+                    document.cookie = 'metaso_search_kits=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                }
+                
+                logMessage('参数已更新: scope=' + currentScope + ', kits=' + currentKits, 'info');
+            });
+        });
+
+        function logMessage(message, type = 'info') {
+            const resultsArea = document.getElementById('results');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item log-' + type;
+            logItem.textContent = new Date().toLocaleTimeString() + ' - ' + message;
+            resultsArea.appendChild(logItem);
+            resultsArea.scrollTop = resultsArea.scrollHeight;
+        }
+
+        async function performSearch() {
+            const query = document.getElementById('searchQuery').value;
+            if (!query.trim()) {
+                logMessage('请输入搜索关键词', 'warning');
+                return;
+            }
+
+            logMessage('开始搜索测试...', 'info');
+            logMessage('搜索关键词: ' + query, 'info');
+            logMessage('期望scope: ' + currentScope + ', kits: ' + currentKits, 'info');
+
+            try {
+                // 设置状态指示器
+                document.querySelector('.test-section:nth-child(2) .status-indicator').className = 'status-indicator status-testing';
+
+                // 构造搜索请求 - 这里会被我们的API拦截器拦截并注入scope参数
+                const searchData = {
+                    q: query,
+                    type: 'search',
+                    // 注意：这里我们故意不传scope和kits，让API拦截器来注入
+                };
+
+                logMessage('发送API请求到 /api/searchV2', 'info');
+                logMessage('请求数据: ' + JSON.stringify(searchData), 'info');
+
+                const response = await fetch('http://localhost:10101/api/searchV2', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Referer': 'http://localhost:10101/?scope=' + encodeURIComponent(currentScope) + '&kits=' + encodeURIComponent(currentKits)
+                    },
+                    body: JSON.stringify(searchData)
+                });
+
+                logMessage('API响应状态: ' + response.status, response.ok ? 'success' : 'error');
+
+                if (response.ok) {
+                    const responseText = await response.text();
+                    logMessage('API响应成功，响应长度: ' + responseText.length + ' 字符', 'success');
+                    
+                    // 尝试解析响应
+                    try {
+                        const data = JSON.parse(responseText);
+                        if (data.results && data.results.length > 0) {
+                            logMessage('搜索成功，找到 ' + data.results.length + ' 条结果', 'success');
+                            logMessage('第一条结果标题: ' + (data.results[0].title || '无标题'), 'success');
+                        } else {
+                            logMessage('搜索响应格式正确，但没有找到结果', 'warning');
+                        }
+                        
+                        // 检查是否有scope相关信息
+                        if (responseText.includes('scope') || responseText.includes('泥沙')) {
+                            logMessage('✅ 响应中包含scope相关信息，参数注入可能成功', 'success');
+                        } else {
+                            logMessage('⚠️ 响应中未发现scope相关信息', 'warning');
+                        }
+                    } catch (parseError) {
+                        logMessage('响应不是JSON格式，可能是HTML页面: ' + responseText.substring(0, 200) + '...', 'info');
+                    }
+                } else {
+                    const errorText = await response.text();
+                    logMessage('API请求失败: ' + errorText, 'error');
+                }
+
+                document.querySelector('.test-section:nth-child(2) .status-indicator').className = 'status-indicator status-ready';
+
+            } catch (error) {
+                logMessage('请求发生错误: ' + error.message, 'error');
+                document.querySelector('.test-section:nth-child(2) .status-indicator').className = 'status-indicator status-error';
+            }
+        }
+
+        function loadMetasoWithParams() {
+            const url = 'http://localhost:10101/?scope=' + encodeURIComponent(currentScope) + '&kits=' + encodeURIComponent(currentKits) + '&q=' + encodeURIComponent(document.getElementById('searchQuery').value);
+            
+            logMessage('加载Metaso页面: ' + url, 'info');
+            
+            const iframe = document.getElementById('metaso-iframe');
+            iframe.src = url;
+            
+            document.getElementById('iframe-container').style.display = 'block';
+        }
+
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            logMessage('API拦截测试页面加载完成', 'success');
+            logMessage('代理服务器地址: http://localhost:10101', 'info');
+            logMessage('准备测试API层面的scope参数注入功能', 'info');
+        });
+    </script>
+</body>
+</html>

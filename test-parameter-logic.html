@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>参数设置逻辑测试</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-case { border: 1px solid #ccc; margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .test-case h3 { margin-top: 0; color: #333; }
+        .log { background: #f5f5f5; padding: 10px; border-radius: 3px; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>参数设置逻辑测试</h1>
+    
+    <div class="test-case">
+        <h3>测试场景</h3>
+        <div id="current-scenario"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试链接</h3>
+        <p>点击下面的链接测试不同的参数设置场景：</p>
+        <ul>
+            <li><a href="http://localhost:10101/">1. 根路径无参数（应跳过所有设置）</a></li>
+            <li><a href="http://localhost:10101/?q=测试">2. 仅有q参数（应跳过scope和kits设置）</a></li>
+            <li><a href="http://localhost:10101/?q=测试&scope=学术">3. 有q和scope参数（应执行ScopeSetup）</a></li>
+            <li><a href="http://localhost:10101/?q=测试&kits=专业">4. 有q和kits参数（应执行kitsSetup）</a></li>
+            <li><a href="http://localhost:10101/?q=测试&scope=学术&kits=专业">5. 完整参数（应执行所有设置）</a></li>
+        </ul>
+    </div>
+    
+    <div class="test-case">
+        <h3>控制台日志输出</h3>
+        <div id="console-output" class="log"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>参数状态检查</h3>
+        <button onclick="checkCurrentState()">刷新状态</button>
+        <div id="parameter-status"></div>
+    </div>
+
+    <script>
+        // 拦截console.log
+        const originalLog = console.log;
+        const logOutput = document.getElementById('console-output');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.join(' ');
+            
+            if (message.includes('[ParameterSetup]') || 
+                message.includes('[ScopeSetup]') || 
+                message.includes('[kitsSetup]')) {
+                
+                const div = document.createElement('div');
+                div.style.margin = '2px 0';
+                
+                if (message.includes('跳过')) {
+                    div.className = 'warning';
+                } else if (message.includes('开始设置') || message.includes('设置完成')) {
+                    div.className = 'success';
+                } else if (message.includes('已清除')) {
+                    div.className = 'error';
+                } else {
+                    div.className = 'info';
+                }
+                
+                div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                logOutput.appendChild(div);
+                logOutput.scrollTop = logOutput.scrollHeight;
+            }
+        };
+        
+        function getCurrentScenario() {
+            const url = window.location.href;
+            const params = new URLSearchParams(window.location.search);
+            const q = params.get('q');
+            const scope = params.get('scope');
+            const kits = params.get('kits');
+            
+            let scenario = '未知场景';
+            
+            if (window.location.pathname === '/' && !window.location.search) {
+                scenario = '1. 根路径无参数 - 应跳过所有参数设置并清除cookie';
+            } else if (q && !scope && !kits) {
+                scenario = '2. 仅有q参数 - 应跳过scope和kits设置';
+            } else if (q && scope && !kits) {
+                scenario = '3. 有q和scope参数 - 应执行ScopeSetup，跳过kitsSetup';
+            } else if (q && !scope && kits) {
+                scenario = '4. 有q和kits参数 - 应执行kitsSetup，跳过ScopeSetup';
+            } else if (q && scope && kits) {
+                scenario = '5. 完整参数 - 应执行ScopeSetup和kitsSetup';
+            }
+            
+            return { scenario, url, params: { q, scope, kits } };
+        }
+        
+        function checkCurrentState() {
+            const { scenario, url, params } = getCurrentScenario();
+            
+            // 检查cookie
+            function getCookieValue(name) {
+                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                return match ? decodeURIComponent(match[2]) : null;
+            }
+            
+            const cookieScope = getCookieValue('metaso_search_scope');
+            const cookieKits = getCookieValue('metaso_search_kits');
+            
+            // 检查sessionStorage
+            const sessionScope = sessionStorage.getItem('metaso_search_scope');
+            const sessionKits = sessionStorage.getItem('metaso_search_kits');
+            const targetScope = sessionStorage.getItem('metaso_search_scope_target');
+            const targetKits = sessionStorage.getItem('metaso_search_kits_target');
+            
+            document.getElementById('current-scenario').innerHTML = `
+                <p><strong>当前场景:</strong> ${scenario}</p>
+                <p><strong>URL:</strong> ${url}</p>
+                <p><strong>URL参数:</strong> q=${params.q || 'null'}, scope=${params.scope || 'null'}, kits=${params.kits || 'null'}</p>
+            `;
+            
+            document.getElementById('parameter-status').innerHTML = `
+                <h4>Cookie状态:</h4>
+                <p>metaso_search_scope: ${cookieScope || 'null'}</p>
+                <p>metaso_search_kits: ${cookieKits || 'null'}</p>
+                
+                <h4>SessionStorage状态:</h4>
+                <p>metaso_search_scope: ${sessionScope || 'null'}</p>
+                <p>metaso_search_kits: ${sessionKits || 'null'}</p>
+                <p>metaso_search_scope_target: ${targetScope || 'null'}</p>
+                <p>metaso_search_kits_target: ${targetKits || 'null'}</p>
+            `;
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkCurrentState();
+                console.log('=== 页面加载完成，开始监控参数设置逻辑 ===');
+            }, 1000);
+        });
+        
+        // 每3秒自动刷新状态
+        setInterval(checkCurrentState, 3000);
+    </script>
+</body>
+</html>

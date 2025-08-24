@@ -1,160 +1,206 @@
-nohup: 忽略输入
-[2025-08-19T07:52:21.567Z] [INFO] [DEV] === metaso.cn 代理服务器已启动 ===
-[2025-08-19T07:52:21.569Z] [INFO] [DEV] 环境: Development
-[2025-08-19T07:52:21.569Z] [INFO] [DEV] 日志级别: DEBUG
-[2025-08-19T07:52:21.569Z] [INFO] [DEV] 监听端口: 10101
-[2025-08-19T07:52:21.570Z] [INFO] [DEV] 访问地址: http://localhost:10101
-[2025-08-19T07:52:21.570Z] [INFO] [DEV] 静态资源: http://localhost:10101/static/
-[2025-08-19T07:52:21.570Z] [INFO] [DEV] 代理目标: https://metaso.cn
-[2025-08-19T07:52:21.570Z] [INFO] [DEV] ==============================
-[2025-08-19T07:52:21.570Z] [INFO] [DEV] 功能说明:
-[2025-08-19T07:52:21.571Z] [INFO] [DEV] - ✓ 移除CSP和X-Frame-Options头
-[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ 删除微信登录相关元素
-[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ 注入localStorage授权信息
-[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ 静态资源本地化服务
-[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ iframe兼容性处理
-[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ 所有页面登录状态保持
-[2025-08-19T07:52:21.572Z] [INFO] [DEV] - ✓ API请求CORS拦截
-[2025-08-19T07:52:21.573Z] [DEBUG] [DEV] 测试命令:
-[2025-08-19T07:52:21.573Z] [DEBUG] [DEV] curl http://localhost:10101 -I
-[2025-08-19T07:52:21.573Z] [DEBUG] [DEV] curl http://localhost:10101/static/metaso.cn_files/06379910118566c4.css -I
-Debugger listening on ws://127.0.0.1:9229/157a268a-9560-47f2-a648-74d75577eab0
-For help, see: https://nodejs.org/en/docs/inspector
-Debugger attached.
-http://localhost:10101/search/4112acf5-8cad-4009-8b4b-f4c2fe21a3aa?q=book
+dotenv not found, using environment variables or defaults
+🔐 Generated authentication credentials:
+UID: 68aa9e00d7689382b1f3b16d
+SID: 7c01ba37365f9f8e269d56c600dbf273
+[2025-08-24T05:07:12.593Z] [INFO] [DEV] === metaso.cn 代理服务器已启动 ===
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 环境: Development
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 日志级别: DEBUG
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 监听端口: 10101
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 主机: localhost
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 协议: http
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 代理服务器URL: http://localhost:10101
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 访问地址: http://localhost:10101
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 静态资源: http://localhost:10101/static/
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 代理目标: https://metaso.cn
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] ==============================
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] 功能说明:
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] - ✓ 移除CSP和X-Frame-Options头
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] - ✓ 删除微信登录相关元素
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] - ✓ 注入localStorage授权信息
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] - ✓ 静态资源本地化服务
+[2025-08-24T05:07:12.594Z] [INFO] [DEV] - ✓ iframe兼容性处理
+[2025-08-24T05:07:12.595Z] [INFO] [DEV] 已移除 metaso.cn_files 相关的静态资源加载逻辑
 
-=== 代理请求 /favicon.ico ===
-\n=== 处理响应头 /favicon.ico ===
-原始响应头: [
-  'x-powered-by',
-  'date',
-  'connection',
-  'accept-ranges',
-  'cache-control',
-  'last-modified',
-  'etag',
-  'x-frame-options',
-  'content-security-policy',
-  'x-content-type-options',
-  'x-xss-protection',
-  'strict-transport-security'
-]
-已移除响应头: [
-  'content-security-policy',
-  'x-frame-options',
-  'x-content-type-options'
-]
-最终响应头: [
-  'x-powered-by',
-  'date',
-  'connection',
-  'accept-ranges',
-  'cache-control',
-  'last-modified',
-  'etag',
-  'x-xss-protection',
-  'strict-transport-security',
-  'x-frame-options',
-  'access-control-allow-origin',
-  'access-control-allow-methods',
-  'access-control-allow-headers',
-  'access-control-allow-credentials'
-]
+=== 代理请求 / ===
+
+=== URL路径解析 ===
+原始路径: /
+原始查询参数: {}
+目标路径: /
+===================
+
+\n=== 处理响应数据 / ===
+处理HTML响应...
+[2025-08-24T05:07:16.997Z] [INFO] [DEV] 处理HTML请求: /
+[2025-08-24T05:07:17.001Z] [DEBUG] [DEV] 已移除CSP meta标签
+[2025-08-24T05:07:17.001Z] [DEBUG] [DEV] 已修改页面标题
+[2025-08-24T05:07:17.002Z] [DEBUG] [DEV] 已修改meta描述
+[2025-08-24T05:07:17.002Z] [DEBUG] [DEV] 已移除广告相关meta标签
+[2025-08-24T05:07:17.003Z] [DEBUG] [DEV] 已移除广告相关meta标签
+[2025-08-24T05:07:17.003Z] [DEBUG] [DEV] 已标记apple-touch-icon为隐藏
+[2025-08-24T05:07:17.003Z] [INFO] [DEV] 处理页面: /，注入通用授权脚本...
+[2025-08-24T05:07:17.010Z] [INFO] [DEV] 已为页面 / 注入通用授权脚本
+[2025-08-24T05:07:17.010Z] [INFO] [DEV] 跳过服务端CSS注入以避免React hydration冲突
+[2025-08-24T05:07:17.011Z] [INFO] [DEV] 已注入页面优化CSS
+[2025-08-24T05:07:17.012Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/44be927df5c0115a.css -> /static/metaso_files/44be927df5c0115a.css
+[2025-08-24T05:07:17.012Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/718de369b3718e96.css -> /static/metaso_files/718de369b3718e96.css
+[2025-08-24T05:07:17.012Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/06379910118566c4.css -> /static/metaso_files/06379910118566c4.css
+[2025-08-24T05:07:17.012Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/4b981a1c10fc7662.css -> /static/metaso_files/4b981a1c10fc7662.css
+[2025-08-24T05:07:17.012Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/c7b14dd3464bc6bc.css -> /static/metaso_files/c7b14dd3464bc6bc.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/fd9c8f1a1f156022.css -> /static/metaso_files/fd9c8f1a1f156022.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/4380e58d55dc1754.css -> /static/metaso_files/4380e58d55dc1754.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/476371466b81ac5d.css -> /static/metaso_files/476371466b81ac5d.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/4d03c0b85e741e00.css -> /static/metaso_files/4d03c0b85e741e00.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/1c9d5a7fe24f080c.css -> /static/metaso_files/1c9d5a7fe24f080c.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/17397bcee0f1d8e4.css -> /static/metaso_files/17397bcee0f1d8e4.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/6355515e57be4dec.css -> /static/metaso_files/6355515e57be4dec.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/989728043fb16b13.css -> /static/metaso_files/989728043fb16b13.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/a63b41ff574c0551.css -> /static/metaso_files/a63b41ff574c0551.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/_next/static/css/142de7b812f784ff.css -> /static/metaso_files/142de7b812f784ff.css
+[2025-08-24T05:07:17.013Z] [DEBUG] [DEV] 处理style: https://static-1.metaso.cn/static/all.min.css -> /static/metaso_files/all.min.css
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/23362-2bb0da0da92b2600.js -> /static/metaso_files/23362-2bb0da0da92b2600.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/main-app-20a8b302c38c77ce.js -> /static/metaso_files/main-app-20a8b302c38c77ce.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/67254-940a8aed57bbb279.js -> /static/metaso_files/67254-940a8aed57bbb279.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/78693-05c8cf67f35a8eed.js -> /static/metaso_files/78693-05c8cf67f35a8eed.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/78130-d0ec469e513f9de9.js -> /static/metaso_files/78130-d0ec469e513f9de9.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/46387-6e0fee05ba56d019.js -> /static/metaso_files/46387-6e0fee05ba56d019.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/53410-acd62d5acfd208da.js -> /static/metaso_files/53410-acd62d5acfd208da.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/57587-7d6ac5ec8af7492a.js -> /static/metaso_files/57587-7d6ac5ec8af7492a.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/80871-180e9c8413e9b6c5.js -> /static/metaso_files/80871-180e9c8413e9b6c5.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/34138-120e14937936bc12.js -> /static/metaso_files/34138-120e14937936bc12.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/94746-33392302932de045.js -> /static/metaso_files/94746-33392302932de045.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/77919-44f58c1942b36fa1.js -> /static/metaso_files/77919-44f58c1942b36fa1.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/64293-d29ae411186ce204.js -> /static/metaso_files/64293-d29ae411186ce204.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/94786-e6414b968c83da1e.js -> /static/metaso_files/94786-e6414b968c83da1e.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/32525-c966770c9b915c07.js -> /static/metaso_files/32525-c966770c9b915c07.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/90077-8e04ae93aae0934b.js -> /static/metaso_files/90077-8e04ae93aae0934b.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/39155-2b2920d93a1d04b3.js -> /static/metaso_files/39155-2b2920d93a1d04b3.js
+[2025-08-24T05:07:17.014Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/59832-d49e6d9b6d1bf30d.js -> /static/metaso_files/59832-d49e6d9b6d1bf30d.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/71632-29f7b73a9b9a2d7d.js -> /static/metaso_files/71632-29f7b73a9b9a2d7d.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/72972-67fd37e31d8b098f.js -> /static/metaso_files/72972-67fd37e31d8b098f.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/15438-6e53d6b116a19592.js -> /static/metaso_files/15438-6e53d6b116a19592.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/33145-2a36d6e88abb2b4e.js -> /static/metaso_files/33145-2a36d6e88abb2b4e.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/53335-0a6762024c63fc4d.js -> /static/metaso_files/53335-0a6762024c63fc4d.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/46746-29296ab7666d15cb.js -> /static/metaso_files/46746-29296ab7666d15cb.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/48467-12d5ea2a65c4de94.js -> /static/metaso_files/48467-12d5ea2a65c4de94.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/52657-2208096816534d17.js -> /static/metaso_files/52657-2208096816534d17.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/35398-74b134348dfc1c52.js -> /static/metaso_files/35398-74b134348dfc1c52.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/97404-8a7a9c5121263977.js -> /static/metaso_files/97404-8a7a9c5121263977.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/32796-0811ab2626a72d4d.js -> /static/metaso_files/32796-0811ab2626a72d4d.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/99205-8204b6fafb4fb2dd.js -> /static/metaso_files/99205-8204b6fafb4fb2dd.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/10638-7d443197d5f76134.js -> /static/metaso_files/10638-7d443197d5f76134.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/43646-cc5bbe3d173714f4.js -> /static/metaso_files/43646-cc5bbe3d173714f4.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/10261-0f67b2c549a22b5a.js -> /static/metaso_files/10261-0f67b2c549a22b5a.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/48022-e77d84c657c8ee89.js -> /static/metaso_files/48022-e77d84c657c8ee89.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/42456-1a18ff358ae70e5d.js -> /static/metaso_files/42456-1a18ff358ae70e5d.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/32392-cb437af10bfd987b.js -> /static/metaso_files/32392-cb437af10bfd987b.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/4274-360f07a52b91cd74.js -> /static/metaso_files/4274-360f07a52b91cd74.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/53820-dd0182663e98f9c7.js -> /static/metaso_files/53820-dd0182663e98f9c7.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/83724-20a034ff183c52e5.js -> /static/metaso_files/83724-20a034ff183c52e5.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/26948-96bdce4bb05194d8.js -> /static/metaso_files/26948-96bdce4bb05194d8.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/95171-4bc92e1041a71fcb.js -> /static/metaso_files/95171-4bc92e1041a71fcb.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/96339-f2b90b54fe6dade5.js -> /static/metaso_files/96339-f2b90b54fe6dade5.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/15708-687166351a7c980b.js -> /static/metaso_files/15708-687166351a7c980b.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/88872-f9eec766d850e20a.js -> /static/metaso_files/88872-f9eec766d850e20a.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/69161-32c467490f12c52c.js -> /static/metaso_files/69161-32c467490f12c52c.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/84277-b77770e6e715cd3c.js -> /static/metaso_files/84277-b77770e6e715cd3c.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/24757-d0cdc48925a30372.js -> /static/metaso_files/24757-d0cdc48925a30372.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/26398-05513588d3cef515.js -> /static/metaso_files/26398-05513588d3cef515.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/55833-6406fd7ec03d6acb.js -> /static/metaso_files/55833-6406fd7ec03d6acb.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/62917-52155ba65d9f8208.js -> /static/metaso_files/62917-52155ba65d9f8208.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/45897-6260c2eb4f3cf00c.js -> /static/metaso_files/45897-6260c2eb4f3cf00c.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/87290-7d53e34465b2009e.js -> /static/metaso_files/87290-7d53e34465b2009e.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/68682-d99b2c9b3d90ae57.js -> /static/metaso_files/68682-d99b2c9b3d90ae57.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/app/(pages)/(menu-attached)/(home)/@desktop/page-b8de43868f9ba2df.js -> /static/metaso_files/page-b8de43868f9ba2df.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/app/(pages)/(menu-attached)/(home)/@desktop/layout-85d98c5f32c49b3c.js -> /static/metaso_files/layout-85d98c5f32c49b3c.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/94038-d44b772d3bf23508.js -> /static/metaso_files/94038-d44b772d3bf23508.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/app/(pages)/(menu-attached)/(home)/@h5/page-c566696042c49da3.js -> /static/metaso_files/page-c566696042c49da3.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/71342-2379156689aeb593.js -> /static/metaso_files/71342-2379156689aeb593.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/42905-61102521bc5f34d6.js -> /static/metaso_files/42905-61102521bc5f34d6.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/80930-2f8a4b32ef9b89e2.js -> /static/metaso_files/80930-2f8a4b32ef9b89e2.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/83678-d021cb9f41ddf69a.js -> /static/metaso_files/83678-d021cb9f41ddf69a.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/49735-bc72059598627bd5.js -> /static/metaso_files/49735-bc72059598627bd5.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/95242-b6efc69a06a744bb.js -> /static/metaso_files/95242-b6efc69a06a744bb.js
+[2025-08-24T05:07:17.015Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/8050-4d526233d6f6639c.js -> /static/metaso_files/8050-4d526233d6f6639c.js
+[2025-08-24T05:07:17.016Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/app/layout-439be5ffd6462862.js -> /static/metaso_files/layout-439be5ffd6462862.js
+[2025-08-24T05:07:17.016Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/app/error-5d467d474a20d678.js -> /static/metaso_files/error-5d467d474a20d678.js
+[2025-08-24T05:07:17.016Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/app/not-found-bb700398128e3868.js -> /static/metaso_files/not-found-bb700398128e3868.js
+[2025-08-24T05:07:17.016Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/polyfills-42372ed130431b0a.js -> /static/metaso_files/polyfills-42372ed130431b0a.js
+[2025-08-24T05:07:17.016Z] [DEBUG] [DEV] 处理script: https://static-1.metaso.cn/_next/static/chunks/webpack-17c73cae451c159a.js -> /static/metaso_files/webpack-17c73cae451c159a.js
+[2025-08-24T05:07:17.016Z] [DEBUG] [DEV] 处理image: https://static-1.metaso.cn/_next/static/media/app-qrcode.f8820aee.png -> /static/metaso_files/app-qrcode.f8820aee.png
+[2025-08-24T05:07:17.019Z] [DEBUG] [DEV] URL替换: https://metaso.cn/g, -> http://localhost:10101/g,
+[2025-08-24T05:07:17.043Z] [INFO] [DEV] 已应用通用metaso.cn URL替换
+[2025-08-24T05:07:17.043Z] [DEBUG] [DEV] 更新现有Preload: https://static-1.metaso.cn/_next/static/media/app-qrcode.f8820aee.png -> /static/metaso_files/app-qrcode.f8820aee.png
+[2025-08-24T05:07:17.043Z] [DEBUG] [DEV] 更新现有Preload: https://static-1.metaso.cn/_next/static/chunks/webpack-17c73cae451c159a.js -> /static/metaso_files/webpack-17c73cae451c159a.js
+[2025-08-24T05:07:17.043Z] [DEBUG] [DEV] 更新现有Preload: https://static-1.metaso.cn/static/tex-mml-chtml.js -> /static/metaso_files/tex-mml-chtml.js
+[2025-08-24T05:07:17.043Z] [DEBUG] [DEV] 更新现有Preload: https://static-1.metaso.cn/static/polyfill.js -> /static/metaso_files/polyfill.js
+[2025-08-24T05:07:17.044Z] [DEBUG] [DEV] 更新现有Preload: https://static-1.metaso.cn/static/serviceWorkerRegister.js -> /static/metaso_files/serviceWorkerRegister.js
+[2025-08-24T05:07:17.044Z] [DEBUG] [DEV] 更新现有Preload: https://static-1.metaso.cn/usermaven/lib.js -> /static/metaso_files/usermaven/lib.js
+[2025-08-24T05:07:17.044Z] [DEBUG] [DEV] 更新现有Preload: https://static-1.metaso.cn/static/init.js -> /static/metaso_files/init.js
+[2025-08-24T05:07:17.051Z] [INFO] [DEV] 已替换 93 个静态资源路径
+[2025-08-24T05:07:17.051Z] [INFO] [DEV] 添加了 84 个预加载链接
+已注入iframe兼容性脚本
+已注入增强版自动搜索脚本
+HTML处理完成
 
 === 代理请求 /serviceWorker.js ===
-\n=== 处理响应头 /serviceWorker.js ===
-原始响应头: [
-  'x-powered-by',
-  'date',
-  'connection',
-  'accept',
-  'accept-charset',
-  'accept-language',
-  'cache-control',
-  'cookie',
-  'eagleeye-rpcid',
-  'eagleeye-traceid',
-  'host',
-  'if-modified-since',
-  'if-none-match',
-  'origin-agent-cluster',
-  'referer',
-  'remoteip',
-  'sec-fetch-dest',
-  'sec-fetch-mode',
-  'sec-fetch-site',
-  'service-worker',
-  'user-agent',
-  'web-server-type',
-  'wl-proxy-client-ip',
-  'x-client-ip',
-  'x-current-path',
-  'x-forwarded-cluster',
-  'x-forwarded-for',
-  'x-forwarded-host',
-  'x-forwarded-port',
-  'x-forwarded-proto',
-  'x-middleware-cache',
-  'x-real-ip',
-  'x-scheme',
-  'x-true-ip',
-  'accept-ranges',
-  'last-modified',
-  'etag',
-  'x-frame-options',
-  'content-security-policy',
-  'x-content-type-options',
-  'x-xss-protection',
-  'strict-transport-security'
-]
-已移除响应头: [
-  'content-security-policy',
-  'x-frame-options',
-  'x-content-type-options'
-]
-最终响应头: [
-  'x-powered-by',
-  'date',
-  'connection',
-  'accept',
-  'accept-charset',
-  'accept-language',
-  'cache-control',
-  'cookie',
-  'eagleeye-rpcid',
-  'eagleeye-traceid',
-  'host',
-  'if-modified-since',
-  'if-none-match',
-  'origin-agent-cluster',
-  'referer',
-  'remoteip',
-  'sec-fetch-dest',
-  'sec-fetch-mode',
-  'sec-fetch-site',
-  'service-worker',
-  'user-agent',
-  'web-server-type',
-  'wl-proxy-client-ip',
-  'x-client-ip',
-  'x-current-path',
-  'x-forwarded-cluster',
-  'x-forwarded-for',
-  'x-forwarded-host',
-  'x-forwarded-port',
-  'x-forwarded-proto',
-  'x-middleware-cache',
-  'x-real-ip',
-  'x-scheme',
-  'x-true-ip',
-  'accept-ranges',
-  'last-modified',
-  'etag',
-  'x-xss-protection',
-  'strict-transport-security',
-  'x-frame-options',
-  'access-control-allow-origin',
-  'access-control-allow-methods',
-  'access-control-allow-headers',
-  'access-control-allow-credentials'
-]
+
+=== URL路径解析 ===
+原始路径: /serviceWorker.js
+原始查询参数: {}
+目标路径: /serviceWorker.js
+===================
+
+
+=== 代理请求 /search/[id] ===
+
+=== URL路径解析 ===
+原始路径: /search/[id]
+原始查询参数: { _rsc: '1p5af' }
+📋 保留参数: _rsc = 1p5af
+目标路径: /search/[id]?_rsc=1p5af
+===================
+
+
+=== 代理请求 /search/[id] ===
+
+=== URL路径解析 ===
+原始路径: /search/[id]
+原始查询参数: { _rsc: 'e6vkl' }
+📋 保留参数: _rsc = e6vkl
+目标路径: /search/[id]?_rsc=e6vkl
+===================
+
+\n=== 处理响应数据 /search/[id] ===
+非HTML响应，直接返回
+\n=== 处理响应数据 /search/[id] ===
+非HTML响应，直接返回
+
+=== 代理请求 /serviceWorker.js ===
+
+=== URL路径解析 ===
+原始路径: /serviceWorker.js
+原始查询参数: {}
+目标路径: /serviceWorker.js
+===================
+
+
+=== 代理请求 /image/wx-fallback-image.png ===
+
+=== URL路径解析 ===
+原始路径: /image/wx-fallback-image.png
+原始查询参数: {}
+目标路径: /image/wx-fallback-image.png
+===================
+
+
+=== 代理请求 /image/wx-fallback-image.png ===
+
+=== URL路径解析 ===
+原始路径: /image/wx-fallback-image.png
+原始查询参数: {}
+目标路径: /image/wx-fallback-image.png
+===================
+
+\n=== 处理响应数据 /image/wx-fallback-image.png ===
+非HTML响应，直接返回

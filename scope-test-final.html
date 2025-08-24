@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scope 参数测试 - 最终验证</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-case {
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .test-case.success {
+            border-color: #4caf50;
+            background: #e8f5e8;
+        }
+        .test-case.pending {
+            border-color: #ff9800;
+            background: #fff3e0;
+        }
+        .test-case.error {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .logs {
+            background: #2d2d2d;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .url-info {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Scope 参数最终测试验证</h1>
+        
+        <div class="instructions">
+            <h3>📋 测试说明</h3>
+            <p><strong>目标：</strong>验证增强版 setupScope() 函数是否成功将搜索范围从默认的"全网"切换到指定的"泥沙知识"</p>
+            <p><strong>期望结果：</strong>页面加载后，搜索范围应该自动从"全网"切换到"泥沙知识"</p>
+            <p><strong>检查方法：</strong></p>
+            <ul>
+                <li>1. 观察页面中的搜索范围选择器</li>
+                <li>2. 查看浏览器控制台中的 "🔧 [SearchParams]" 日志</li>
+                <li>3. 确认是否显示"泥沙知识"而不是"全网"</li>
+            </ul>
+        </div>
+
+        <div class="test-case pending" id="testCase1">
+            <div class="status">🔄 测试1: 带scope参数的搜索页面</div>
+            <div class="url-info">
+                测试URL: http://localhost:10101/?q=进水塔活动铅鱼&scope=泥沙知识
+            </div>
+            <iframe 
+                id="testFrame1"
+                src="http://localhost:10101/?q=进水塔活动铅鱼&scope=泥沙知识"
+                onload="handleFrameLoad('testFrame1', 'testCase1')">
+            </iframe>
+            <div class="logs" id="logs1">
+                等待页面加载...
+                <br>请打开浏览器开发者工具(F12)查看控制台日志
+                <br>寻找 "🔧 [SearchParams]" 相关的日志信息
+            </div>
+        </div>
+
+        <div class="test-case pending" id="testCase2">
+            <div class="status">🔄 测试2: 对比 - 无scope参数的页面（应显示"全网"）</div>
+            <div class="url-info">
+                对比URL: http://localhost:10101/?q=进水塔活动铅鱼
+            </div>
+            <iframe 
+                id="testFrame2"
+                src="http://localhost:10101/?q=进水塔活动铅鱼"
+                onload="handleFrameLoad('testFrame2', 'testCase2')">
+            </iframe>
+            <div class="logs" id="logs2">
+                等待页面加载...
+                <br>此页面应该显示默认的"全网"搜索范围
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let frameLoadCount = 0;
+        
+        function handleFrameLoad(frameId, caseId) {
+            frameLoadCount++;
+            const logElement = document.getElementById(caseId === 'testCase1' ? 'logs1' : 'logs2');
+            const caseElement = document.getElementById(caseId);
+            
+            logElement.innerHTML += `<br>📥 Frame ${frameId} 已加载 (${new Date().toLocaleTimeString()})`;
+            
+            // 给页面一些时间执行JavaScript
+            setTimeout(() => {
+                try {
+                    const frame = document.getElementById(frameId);
+                    const frameDoc = frame.contentDocument || frame.contentWindow.document;
+                    
+                    // 尝试检查页面内容
+                    logElement.innerHTML += `<br>🔍 正在检查页面内容...`;
+                    
+                    // 查找搜索范围相关元素
+                    const scopeElements = frameDoc.querySelectorAll('[aria-label*="知识"], [aria-label*="全网"], .scope-selector, .search-scope');
+                    
+                    if (scopeElements.length > 0) {
+                        logElement.innerHTML += `<br>✅ 找到 ${scopeElements.length} 个搜索范围相关元素`;
+                        scopeElements.forEach((el, index) => {
+                            logElement.innerHTML += `<br>   ${index + 1}. ${el.tagName}: "${el.textContent.trim()}" (aria-label: "${el.getAttribute('aria-label') || 'N/A'}")`;
+                        });
+                        
+                        // 检查是否包含"泥沙知识"
+                        const hasMudSandKnowledge = Array.from(scopeElements).some(el => 
+                            el.textContent.includes('泥沙知识') || 
+                            (el.getAttribute('aria-label') && el.getAttribute('aria-label').includes('泥沙知识'))
+                        );
+                        
+                        if (hasMudSandKnowledge && caseId === 'testCase1') {
+                            caseElement.className = 'test-case success';
+                            caseElement.querySelector('.status').innerHTML = '✅ 测试1: 成功 - 检测到"泥沙知识"范围';
+                            logElement.innerHTML += `<br><strong>🎉 SUCCESS: 页面成功设置为"泥沙知识"范围！</strong>`;
+                        } else if (!hasMudSandKnowledge && caseId === 'testCase2') {
+                            caseElement.className = 'test-case success';
+                            caseElement.querySelector('.status').innerHTML = '✅ 测试2: 成功 - 确认显示默认"全网"范围';
+                            logElement.innerHTML += `<br><strong>✓ 对比测试正常: 无scope参数时显示默认范围</strong>`;
+                        } else {
+                            caseElement.className = 'test-case error';
+                            logElement.innerHTML += `<br><strong>❌ 未检测到预期的搜索范围设置</strong>`;
+                        }
+                    } else {
+                        logElement.innerHTML += `<br>⚠️ 未找到搜索范围相关元素，可能页面仍在加载中`;
+                        
+                        // 延时再次检查
+                        setTimeout(() => {
+                            handleFrameLoad(frameId, caseId);
+                        }, 3000);
+                    }
+                    
+                } catch (error) {
+                    logElement.innerHTML += `<br>❌ 跨域限制: 无法直接检查iframe内容`;
+                    logElement.innerHTML += `<br>💡 请手动检查iframe中的搜索范围显示`;
+                    
+                    // 标记为需要手动验证
+                    const caseElement = document.getElementById(caseId);
+                    caseElement.className = 'test-case pending';
+                    caseElement.querySelector('.status').innerHTML = '🔍 需要手动验证 - 请查看iframe内容';
+                }
+            }, 2000);
+        }
+        
+        // 页面加载完成后的提示
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log('🔧 测试页面已加载');
+                console.log('📋 请观察两个iframe的搜索范围设置：');
+                console.log('   1. 第一个iframe应该显示"泥沙知识"');
+                console.log('   2. 第二个iframe应该显示"全网"（默认）');
+                console.log('🔍 同时请查看开发者工具控制台中的 "🔧 [SearchParams]" 日志');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

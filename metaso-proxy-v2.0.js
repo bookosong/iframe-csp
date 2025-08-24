@@ -193,9 +193,7 @@ function processHtmlResponse(html, requestPath) {
         });
         logger.info('已删除微信广告DOM及其容器');
 
-    // 在<head>插入meta授权token，便于前端检测
-    $('head').prepend('<meta name="authorization" content="Bearer mk-4A9944E6F3917711EFCF7B772BC3A5AE">');
-    logger.info('已插入meta授权token');
+    
         
         // 优化页面标题和meta信息
         $('title').each((index, element) => {

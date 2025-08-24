@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索URL测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .url-box { 
+            background: #f5f5f5; 
+            padding: 10px; 
+            border-radius: 5px; 
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        .test-link { 
+            display: inline-block; 
+            background: #4CAF50; 
+            color: white; 
+            padding: 10px 20px; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            margin: 5px 0;
+        }
+        .test-link:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>搜索URL测试页面</h1>
+    
+    <h2>问题URL（可能有编码问题）:</h2>
+    <div class="url-box">
+        http://localhost:10101/?q=排沙洞运用限制条件&scope=泥沙知识
+    </div>
+    <a href="http://localhost:10101/?q=排沙洞运用限制条件&scope=泥沙知识" 
+       class="test-link" target="_blank">测试原始URL</a>
+    
+    <h2>正确编码的URL:</h2>
+    <div class="url-box">
+        http://localhost:10101/?q=%E6%8E%92%E6%B2%99%E6%B4%9E%E8%BF%90%E7%94%A8%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6&scope=%E6%B3%A5%E6%B2%99%E7%9F%A5%E8%AF%86
+    </div>
+    <a href="http://localhost:10101/?q=%E6%8E%92%E6%B2%99%E6%B4%9E%E8%BF%90%E7%94%A8%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6&scope=%E6%B3%A5%E6%B2%99%E7%9F%A5%E8%AF%86" 
+       class="test-link" target="_blank">测试编码URL</a>
+    
+    <h2>JavaScript自动编码测试:</h2>
+    <script>
+        function testSearch() {
+            const query = '排沙洞运用限制条件';
+            const scope = '泥沙知识';
+            const encodedUrl = `http://localhost:10101/?q=${encodeURIComponent(query)}&scope=${encodeURIComponent(scope)}`;
+            window.open(encodedUrl, '_blank');
+        }
+    </script>
+    <button onclick="testSearch()" style="background: #008CBA; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+        JavaScript自动编码测试
+    </button>
+    
+    <h2>服务器状态检查:</h2>
+    <div id="serverStatus">检查中...</div>
+    
+    <script>
+        // 检查服务器状态
+        fetch('http://localhost:10101/')
+            .then(response => {
+                document.getElementById('serverStatus').innerHTML = 
+                    `<span style="color: green;">✓ 服务器运行正常 (状态码: ${response.status})</span>`;
+            })
+            .catch(error => {
+                document.getElementById('serverStatus').innerHTML = 
+                    `<span style="color: red;">✗ 服务器连接失败: ${error.message}</span>`;
+            });
+    </script>
+</body>
+</html>

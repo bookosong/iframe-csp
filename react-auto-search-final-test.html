@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增强版 React 自动搜索测试 - 最终版本</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.15);
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .test-section h2 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .url-display {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .test-button {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.4);
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(31, 38, 135, 0.6);
+        }
+        .iframe-container {
+            width: 100%;
+            height: 600px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .status {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #4ECDC4;
+        }
+        .feature-list {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .feature-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .feature-list li::before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+        }
+        .enhancement-note {
+            background: linear-gradient(45deg, #FF9A8B, #A8E6CF);
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .test-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 增强版 React 自动搜索测试</h1>
+        
+        <div class="enhancement-note">
+            <h3>🎯 最新增强功能</h3>
+            <p><strong>增强的React组件交互:</strong> 全新的输入模拟系统，专门针对React受控组件进行优化，包括逐字符输入模拟、React内部状态同步、和多重事件触发机制。</p>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 核心功能特性</h2>
+            <div class="feature-list">
+                <ul>
+                    <li>React受控组件状态同步</li>
+                    <li>逐字符输入模拟</li>
+                    <li>多重事件触发机制</li>
+                    <li>搜索按钮自动启用</li>
+                    <li>智能延迟处理</li>
+                    <li>错误恢复机制</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎪 综合测试用例</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>AI技术搜索</h3>
+                    <button class="test-button" onclick="testSearch('AI人工智能技术发展趋势与前景分析')">测试 AI 搜索</button>
+                </div>
+                <div class="test-card">
+                    <h3>科学研究</h3>
+                    <button class="test-button" onclick="testSearch('量子计算机原理与应用前景研究')">测试科学搜索</button>
+                </div>
+                <div class="test-card">
+                    <h3>中文长文本</h3>
+                    <button class="test-button" onclick="testSearch('中华文化传统节日春节的历史演变与现代意义深度解析')">测试长文本</button>
+                </div>
+                <div class="test-card">
+                    <h3>特殊字符</h3>
+                    <button class="test-button" onclick="testSearch('JavaScript & React 开发 - 2024年最新技术栈!')">测试特殊字符</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔍 当前测试URL</h2>
+            <div class="url-display" id="currentUrl">等待测试...</div>
+            <div class="status" id="testStatus">准备就绪，点击上方按钮开始测试</div>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 实时预览</h2>
+            <div class="iframe-container">
+                <iframe id="testFrame" src="http://localhost:10101/" title="Metaso Search Test"></iframe>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 React交互增强说明</h2>
+            <div class="feature-list">
+                <h4>增强的事件模拟:</h4>
+                <ul>
+                    <li>直接操作React内部属性以确保状态同步</li>
+                    <li>逐字符输入模拟真实用户行为</li>
+                    <li>多重事件触发: input, keydown, keyup, change</li>
+                    <li>智能聚焦和失焦处理</li>
+                    <li>延迟处理确保React状态更新</li>
+                    <li>回退机制处理异常情况</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 技术实现细节</h2>
+            <div class="url-display">
+<strong>核心改进:</strong><br>
+1. 使用 Object.getOwnPropertyDescriptor 直接操作React属性<br>
+2. 逐字符输入模拟，每个字符触发完整事件序列<br>
+3. 多次触发input事件确保React状态同步<br>
+4. 智能延迟处理避免竞态条件<br>
+5. 错误处理和回退机制保证稳定性
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testCounter = 0;
+
+        function testSearch(query) {
+            testCounter++;
+            const encodedQuery = encodeURIComponent(query);
+            const testUrl = `http://localhost:10101/?q=${encodedQuery}`;
+            
+            // 更新状态显示
+            document.getElementById('currentUrl').textContent = testUrl;
+            document.getElementById('testStatus').innerHTML = `
+                <strong>测试 #${testCounter} 启动</strong><br>
+                查询: "${query}"<br>
+                状态: 加载中，请观察iframe中的自动搜索行为...<br>
+                预期: 页面加载后自动填入搜索内容并启用搜索按钮
+            `;
+            
+            // 更新iframe
+            const iframe = document.getElementById('testFrame');
+            iframe.src = testUrl;
+            
+            // 设置超时检查
+            setTimeout(() => {
+                document.getElementById('testStatus').innerHTML += `<br><span style="color: #FFD700;">⏰ 10秒检查点 - 如果搜索按钮已启用，说明React交互成功!</span>`;
+            }, 10000);
+
+            // 记录测试日志
+            console.log(`🧪 Test #${testCounter}:`, {
+                query: query,
+                url: testUrl,
+                timestamp: new Date().toISOString(),
+                expected: 'Auto-fill search input and enable search button'
+            });
+        }
+
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            console.log('🚀 增强版 React 自动搜索测试页面已加载');
+            console.log('🔧 新增功能: 增强的React组件交互');
+            console.log('🎯 测试目标: 验证自动搜索功能在React环境下的完整工作流程');
+            
+            // 初始状态
+            document.getElementById('testStatus').innerHTML = `
+                <strong>🎉 系统就绪</strong><br>
+                代理服务器: http://localhost:10101<br>
+                增强功能: React组件交互优化<br>
+                测试方法: 点击上方测试按钮观察自动搜索行为
+            `;
+        });
+
+        // iframe 加载事件监听
+        document.getElementById('testFrame').addEventListener('load', function() {
+            const currentStatus = document.getElementById('testStatus').innerHTML;
+            document.getElementById('testStatus').innerHTML = currentStatus + `<br><span style="color: #4ECDC4;">✅ 页面加载完成，React自动搜索脚本应该正在执行...</span>`;
+        });
+    </script>
+</body>
+</html>
